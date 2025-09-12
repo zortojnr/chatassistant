@@ -117,7 +117,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
                 />
               </div>
               <div>
-                <h1 className="text-lg font-semibold text-gray-800">
                 <h1 className="text-lg font-semibold text-white">
                   MAU Assistant
                 </h1>
