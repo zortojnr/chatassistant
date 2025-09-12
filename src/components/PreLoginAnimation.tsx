@@ -9,7 +9,7 @@ const PreLoginAnimation: React.FC<PreLoginAnimationProps> = ({ onComplete }) => 
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentLetterIndex, setCurrentLetterIndex] = useState(0);
   
-  const words = ['M.O.D.I.B.B.O', 'A.D.A.M.A', 'U.N.I.V.E.R.S.I.T.Y'];
+  const words = ['MODIBBO', 'ADAMA', 'UNIVERSITY'];
   const currentWord = words[currentWordIndex];
   
   useEffect(() => {
@@ -17,7 +17,7 @@ const PreLoginAnimation: React.FC<PreLoginAnimationProps> = ({ onComplete }) => 
       if (currentLetterIndex < currentWord.length) {
         const timer = setTimeout(() => {
           setCurrentLetterIndex(prev => prev + 1);
-        }, 150);
+        }, 80);
         return () => clearTimeout(timer);
       } else {
         // Word complete, move to next word after a pause
@@ -29,16 +29,16 @@ const PreLoginAnimation: React.FC<PreLoginAnimationProps> = ({ onComplete }) => 
             // All words complete, wait then finish
             setTimeout(() => {
               onComplete();
-            }, 1000);
+            }, 500);
           }
-        }, 500);
+        }, 300);
         return () => clearTimeout(timer);
       }
     }
   }, [currentWordIndex, currentLetterIndex, currentWord.length, onComplete]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-800 via-green-700 to-green-600 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-mau-blue via-mau-dark-blue to-blue-900 flex items-center justify-center">
       <div className="text-center">
         {/* University Logo */}
         <motion.div
@@ -47,7 +47,7 @@ const PreLoginAnimation: React.FC<PreLoginAnimationProps> = ({ onComplete }) => 
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="mb-8"
         >
-          <div className="w-32 h-32 mx-auto mb-6 bg-white rounded-lg shadow-2xl flex items-center justify-center p-4">
+          <div className="w-32 h-32 mx-auto mb-6 bg-white rounded-full shadow-2xl flex items-center justify-center p-4">
             <img 
               src="/MAU.jpg" 
               alt="MAU Logo" 
@@ -76,9 +76,7 @@ const PreLoginAnimation: React.FC<PreLoginAnimationProps> = ({ onComplete }) => 
                   }}
                   className="inline-block"
                 >
-                  {letter === '.' ? (
-                    <span className="text-yellow-400 mx-1">•</span>
-                  ) : letter === ' ' ? (
+                  {letter === ' ' ? (
                     '\u00A0'
                   ) : (
                     letter
@@ -94,7 +92,7 @@ const PreLoginAnimation: React.FC<PreLoginAnimationProps> = ({ onComplete }) => 
           initial={{ opacity: 0 }}
           animate={{ opacity: currentWordIndex >= words.length ? 1 : 0 }}
           transition={{ delay: 0.5, duration: 0.8 }}
-          className="text-green-200 text-lg mt-6"
+          className="text-blue-200 text-lg mt-6"
         >
           Knowledge and Humanism
         </motion.p>

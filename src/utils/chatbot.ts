@@ -88,12 +88,12 @@ function generateResponse(intent: string, message: string, userData: UserData): 
       if (message.toLowerCase().includes('grading') || message.toLowerCase().includes('grade')) {
         return `MAU uses a 5-point grading system:
         
-• A: 5.0 points (70-100%)
-• B: 4.0 points (60-69%)
-• C: 3.0 points (50-59%)
-• D: 2.0 points (45-49%)
-• E: 1.0 points (40-44%)
-• F: 0.0 points (0-39%)
+A: 5.0 points (70-100%)
+B: 4.0 points (60-69%)
+C: 3.0 points (50-59%)
+D: 2.0 points (45-49%)
+E: 1.0 points (40-44%)
+F: 0.0 points (0-39%)
 
 Your CGPA is calculated based on the total grade points earned divided by total credit units attempted.`;
       }
@@ -101,207 +101,207 @@ Your CGPA is calculated based on the total grade points earned divided by total 
       if (message.toLowerCase().includes('registration') || message.toLowerCase().includes('register')) {
         return `Course registration at MAU is done through the Student Portal during designated periods. Here's what you need to know:
 
-📋 **Requirements:**
-• Clear all outstanding fees
-• Meet academic requirements for your level
-• Get advisor approval
+Requirements:
+Clear all outstanding fees
+Meet academic requirements for your level
+Get advisor approval
 
-🖥️ **Process:**
+Process:
 1. Log into the Student Portal
 2. Navigate to Course Registration
 3. Select courses for the semester
 4. Submit for advisor approval
 5. Print registration slip
 
-⏰ Registration periods are announced on the university website and Student Portal.`;
+Registration periods are announced on the university website and Student Portal.`;
       }
       
       if (message.toLowerCase().includes('result') || message.toLowerCase().includes('transcript')) {
         return `To access your academic records:
 
-📊 **Check Results:**
-• Log into the Student Portal with your student ID
-• Navigate to Academic Records
-• View semester results and CGPA
+Check Results:
+Log into the Student Portal with your student ID
+Navigate to Academic Records
+View semester results and CGPA
 
-📜 **Get Transcript:**
-• Visit the Academic Office
-• Submit transcript application form
-• Provide payment receipt and valid ID
-• Processing takes 3-5 working days
+Get Transcript:
+Visit the Academic Office
+Submit transcript application form
+Provide payment receipt and valid ID
+Processing takes 3-5 working days
 
 Need help with your Student Portal login? Contact ICT Support.`;
       }
       
       return `I can help you with academic matters including:
-• Course registration and add/drop procedures
-• Grading system and CGPA calculation
-• Result checking and transcript requests
-• Academic calendar and important dates
-• Examination procedures
+Course registration and add/drop procedures
+Grading system and CGPA calculation
+Result checking and transcript requests
+Academic calendar and important dates
+Examination procedures
 
 What specific academic information do you need?`;
     
     case 'payment':
       return `MAU offers several payment methods for school fees:
 
-💳 **Payment Options:**
-• Online payment via Student Portal
-• Bank transfer to university account
-• POS payment at designated campus centers
+Payment Options:
+Online payment via Student Portal
+Bank transfer to university account
+POS payment at designated campus centers
 
-🏦 **Bank Details:**
+Bank Details:
 Contact the Bursary Department for current bank account details.
 
-⏰ **Important Notes:**
-• Payment deadlines are announced each semester
-• Late payments may incur penalty fees
-• Keep payment receipts for your records
-• Installment options may be available (contact Bursary)
+Important Notes:
+Payment deadlines are announced each semester
+Late payments may incur penalty fees
+Keep payment receipts for your records
+Installment options may be available (contact Bursary)
 
 Need help with online payment? Contact ICT Support at the Help Desk.`;
     
     case 'registration':
       return `Course registration information for ${userData.level} students:
 
-📅 **Registration Periods:**
-• Announced on university website and Student Portal
-• Usually at the beginning of each semester
-• Late registration available with penalty fees
+Registration Periods:
+Announced on university website and Student Portal
+Usually at the beginning of each semester
+Late registration available with penalty fees
 
-✅ **Requirements:**
-• All fees must be paid
-• Academic standing requirements met
-• Advisor approval required
+Requirements:
+All fees must be paid
+Academic standing requirements met
+Advisor approval required
 
-🔄 **Add/Drop Period:**
-• First 2 weeks of semester
-• Use Student Portal or visit Academic Office
-• May require additional approvals
+Add/Drop Period:
+First 2 weeks of semester
+Use Student Portal or visit Academic Office
+May require additional approvals
 
-📞 **Need Help?**
+Need Help?
 Contact your Faculty Academic Office or visit the main Academic Office for assistance.`;
     
     case 'campus':
       if (message.toLowerCase().includes('location') || message.toLowerCase().includes('address')) {
-        return `🏛️ **MAU Campus Location:**
+        return `MAU Campus Location:
 Modibbo Adama University
-Sangere, Girei LGA
+PMB 2076, Yola
 Adamawa State, Nigeria
 
-🏫 **Established:** 1981 (Renamed in 2021)
-🎯 **Motto:** "Knowledge and Humanism"
+Established: 1981 (Renamed in 2021)
+Motto: "Knowledge and Humanism"
 
 The campus is easily accessible by public transport and private vehicles. Parking facilities are available on campus.`;
       }
       
       if (message.toLowerCase().includes('library')) {
-        return `📚 **MAU Library Services:**
+        return `MAU Library Services:
 
-⏰ **Operating Hours:**
-• Monday-Friday: 8:00 AM - 10:00 PM
-• Saturday: 9:00 AM - 6:00 PM
-• Closed on Sundays and public holidays
+Operating Hours:
+Monday-Friday: 8:00 AM - 10:00 PM
+Saturday: 9:00 AM - 6:00 PM
+Closed on Sundays and public holidays
 
-🔧 **Services Available:**
-• Study spaces and reading rooms
-• Computer lab with internet access
-• Research assistance
-• Digital resources and databases
-• Printing and photocopying
+Services Available:
+Study spaces and reading rooms
+Computer lab with internet access
+Research assistance
+Digital resources and databases
+Printing and photocopying
 
-📖 **Resources:**
-• Academic books and journals
-• Past questions and project materials
-• Online databases and e-books
+Resources:
+Academic books and journals
+Past questions and project materials
+Online databases and e-books
 
 Visit the library for quiet study spaces and research support!`;
       }
       
       if (message.toLowerCase().includes('hostel') || message.toLowerCase().includes('accommodation')) {
-        return `🏠 **MAU Accommodation:**
+        return `MAU Accommodation:
 
-📝 **Application Process:**
-• Apply through Student Affairs Office
-• Submit required documents
-• Pay accommodation fees
-• Allocation based on availability
+Application Process:
+Apply through Student Affairs Office
+Submit required documents
+Pay accommodation fees
+Allocation based on availability
 
-📋 **Requirements:**
-• Completed accommodation form
-• Passport photographs
-• Admission letter (for new students)
-• Payment receipt
+Requirements:
+Completed accommodation form
+Passport photographs
+Admission letter (for new students)
+Payment receipt
 
-🏢 **Facilities:**
-• Male and female hostels available
-• Basic furnishing provided
-• Common areas and study spaces
+Facilities:
+Male and female hostels available
+Basic furnishing provided
+Common areas and study spaces
 
-📞 **Contact:** Student Affairs Office for current availability and rates.`;
+Contact: Student Affairs Office for current availability and rates.`;
       }
       
       return `I can provide information about MAU campus including:
-• Campus location and directions
-• Library services and hours
-• Hostel accommodation
-• Campus facilities and buildings
-• Transportation and parking
+Campus location and directions
+Library services and hours
+Hostel accommodation
+Campus facilities and buildings
+Transportation and parking
 
 What specific campus information do you need?`;
     
     case 'contact':
-      return `📞 **MAU Contact Information:**
+      return `MAU Contact Information:
 
-🆘 **Emergency Contacts:**
-• Security: Campus Security Office
-• Medical: University Health Center
-• Fire Emergency: Contact Security immediately
+Emergency Contacts:
+Security: Campus Security Office
+Medical: University Health Center
+Fire Emergency: Contact Security immediately
 
-🎓 **Academic Support:**
-• Faculty Academic Office
-• Head of Department
-• Academic Advisor
-• Main Academic Office
+Academic Support:
+Faculty Academic Office
+Head of Department
+Academic Advisor
+Main Academic Office
 
-💻 **ICT Support:**
-• ICT Help Desk
-• Hours: Monday-Friday, 8:00 AM - 5:00 PM
-• Services: Student Portal, email setup, WiFi assistance
+ICT Support:
+ICT Help Desk
+Hours: Monday-Friday, 8:00 AM - 5:00 PM
+Services: Student Portal, email setup, WiFi assistance
 
-🏢 **Administrative Offices:**
-• Bursary Department (fees and payments)
-• Student Affairs (accommodation, student life)
-• Registry (transcripts, certificates)
+Administrative Offices:
+Bursary Department (fees and payments)
+Student Affairs (accommodation, student life)
+Registry (transcripts, certificates)
 
 Need a specific department contact? Let me know what you're looking for!`;
     
     case 'leadership':
-      return `🏛️ **MAU Leadership:**
+      return `MAU Leadership:
 
-👨‍🎓 **Vice-Chancellor:**
+Vice-Chancellor:
 Prof. Ibrahim Umar
 
-👥 **Deputy Vice-Chancellors:**
-• Deputy VC (Academic)
-• Deputy VC (Administration)
+Deputy Vice-Chancellors:
+Deputy VC (Academic)
+Deputy VC (Administration)
 
-🏢 **Administrative Structure:**
-• Registrar
-• Bursar
-• Librarian
-• Various Deans of Faculties
+Administrative Structure:
+Registrar
+Bursar
+Librarian
+Various Deans of Faculties
 
 Each faculty has its own Dean and administrative structure. The university leadership is committed to academic excellence and student welfare.`;
     
     default:
       return `I'm here to help you with information about MAU! I can assist with:
 
-🎓 **Academic:** Course registration, grading, results, transcripts
-💳 **Payments:** Fee payment methods and procedures
-🏛️ **Campus:** Location, facilities, library, accommodation
-📞 **Contacts:** Department contacts and emergency information
-👥 **Student Life:** Clubs, activities, and campus services
+Academic: Course registration, grading, results, transcripts
+Payments: Fee payment methods and procedures
+Campus: Location, facilities, library, accommodation
+Contacts: Department contacts and emergency information
+Student Life: Clubs, activities, and campus services
 
 What would you like to know more about?`;
   }

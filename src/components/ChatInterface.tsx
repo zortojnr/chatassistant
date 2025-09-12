@@ -26,6 +26,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showLogo, setShowLogo] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -88,14 +89,27 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
   };
 
   return (
-    <div className="h-screen flex bg-gray-50">
+    <div className="h-screen flex bg-gray-50 relative">
+      {/* Background Logo */}
+      {showLogo && (
+        <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-0">
+          <div className="w-64 h-64 opacity-5">
+            <img 
+              src="/MAU.jpg" 
+              alt="MAU Logo Background" 
+              className="w-full h-full object-contain"
+            />
+          </div>
+        </div>
+      )}
+      
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col relative z-10">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 p-4 shadow-sm">
+        <div className="bg-mau-blue border-b border-blue-700 p-4 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center p-1">
+              <div className="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center p-1">
                 <img 
                   src="/MAU.jpg" 
                   alt="MAU Logo" 
@@ -104,19 +118,28 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
               </div>
               <div>
                 <h1 className="text-lg font-semibold text-gray-800">
+                <h1 className="text-lg font-semibold text-white">
                   MAU Assistant
                 </h1>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-blue-200">
                   {userData.faculty} • {userData.level}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <Button
+                onClick={() => setShowLogo(!showLogo)}
+                variant="outline"
+                size="sm"
+                className="hidden md:flex items-center gap-2 border-blue-300 text-white hover:bg-blue-700"
+              >
+                {showLogo ? 'Hide Logo' : 'Show Logo'}
+              </Button>
+              <Button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 variant="outline"
                 size="sm"
-                className="md:hidden"
+                className="md:hidden border-blue-300 text-white hover:bg-blue-700"
               >
                 Quick Help
               </Button>
@@ -124,7 +147,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
                 onClick={onLogout}
                 variant="outline"
                 size="sm"
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 border-blue-300 text-white hover:bg-blue-700"
               >
                 <LogOut size={16} />
                 <span className="hidden sm:inline">Logout</span>
@@ -134,7 +157,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
         </div>
 
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 relative">
           <div className="max-w-4xl mx-auto">
             {messages.map((message) => (
               <ChatBubble key={message.id} message={message} />
@@ -178,7 +201,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
               <Button
                 onClick={handleSendMessage}
                 disabled={!inputMessage.trim() || isTyping}
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2"
+                className="bg-mau-blue hover:bg-mau-dark-blue text-white px-4 py-2"
               >
                 <Send size={16} />
               </Button>

@@ -53,7 +53,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ onQuickReply, isOpen, onToggl
       {/* Mobile Toggle Button */}
       <Button
         onClick={onToggle}
-        className="md:hidden fixed top-4 right-4 z-50 bg-green-600 hover:bg-green-700 text-white p-2 rounded-full shadow-lg"
+        className="md:hidden fixed top-4 right-4 z-50 bg-mau-blue hover:bg-mau-dark-blue text-white p-2 rounded-full shadow-lg"
         size="icon"
       >
         {isOpen ? <X size={20} /> : <Menu size={20} />}
@@ -97,7 +97,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ onQuickReply, isOpen, onToggl
                     className="w-full p-3 flex items-center justify-between text-left hover:bg-gray-50 transition-colors rounded-lg"
                   >
                     <div className="flex items-center gap-2">
-                      <IconComponent size={18} className="text-green-600" />
+                      <IconComponent size={18} className="text-mau-blue" />
                       <span className="font-medium text-gray-800">
                         {category.title}
                       </span>
@@ -123,7 +123,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ onQuickReply, isOpen, onToggl
                             <button
                               key={index}
                               onClick={() => handleQuickReply(item.answer)}
-                              className="w-full text-left p-2 text-sm text-gray-600 hover:bg-green-50 hover:text-green-700 rounded transition-colors"
+                              className="w-full text-left p-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-mau-blue rounded transition-colors"
                             >
                               {item.question}
                             </button>

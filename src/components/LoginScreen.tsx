@@ -71,7 +71,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-800 via-green-700 to-green-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-mau-blue via-mau-dark-blue to-blue-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* University Logo */}
         <motion.div
@@ -80,7 +80,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-center mb-8"
         >
-          <div className="w-24 h-24 mx-auto mb-4 bg-white rounded-lg shadow-lg flex items-center justify-center p-3">
+          <div className="w-24 h-24 mx-auto mb-4 bg-white rounded-full shadow-lg flex items-center justify-center p-3">
             <img 
               src="/MAU.jpg" 
               alt="MAU Logo" 
@@ -134,7 +134,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
         >
           <Card className="bg-white/95 backdrop-blur-sm shadow-2xl">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl text-green-800">Student Login</CardTitle>
+              <CardTitle className="text-2xl text-mau-blue">Student Login</CardTitle>
               <CardDescription>
                 Access your MAU Assistant Dashboard
               </CardDescription>
@@ -201,7 +201,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
 
                 <Button 
                   type="submit" 
-                  className="w-full bg-green-700 hover:bg-green-800 text-white py-2 rounded-md transition-colors mb-4"
+                  className="w-full bg-mau-blue hover:bg-mau-dark-blue text-white py-2 rounded-md transition-colors mb-4"
                 >
                   Access MAU Assistant
                 </Button>
@@ -214,7 +214,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
                     type="button"
                     onClick={onSignUp}
                     variant="outline"
-                    className="w-full border-green-700 text-green-700 hover:bg-green-50 flex items-center justify-center gap-2"
+                    className="w-full border-mau-blue text-mau-blue hover:bg-blue-50 flex items-center justify-center gap-2"
                   >
                     <UserPlus size={16} />
                     Sign Up as New Student

@@ -91,7 +91,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onBack, onSignUp }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-800 via-green-700 to-green-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-mau-blue via-mau-dark-blue to-blue-900 flex items-center justify-center p-4">
       <div className="w-full max-w-2xl">
         {/* University Logo */}
         <motion.div
@@ -100,7 +100,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onBack, onSignUp }) => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-center mb-8"
         >
-          <div className="w-24 h-24 mx-auto mb-4 bg-white rounded-lg shadow-lg flex items-center justify-center p-3">
+          <div className="w-24 h-24 mx-auto mb-4 bg-white rounded-full shadow-lg flex items-center justify-center p-3">
             <img 
               src="/MAU.jpg" 
               alt="MAU Logo" 
@@ -110,7 +110,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onBack, onSignUp }) => {
           <h1 className="text-white text-2xl md:text-3xl font-bold tracking-wider">
             MODIBBO ADAMA UNIVERSITY
           </h1>
-          <p className="text-green-200 text-sm mt-2">Knowledge and Humanism</p>
+          <p className="text-blue-200 text-sm mt-2">Knowledge and Humanism</p>
         </motion.div>
 
         {/* Sign Up Form */}
@@ -126,14 +126,14 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onBack, onSignUp }) => {
                   onClick={onBack}
                   variant="ghost"
                   size="sm"
-                  className="flex items-center gap-2 text-green-700 hover:text-green-800"
+                  className="flex items-center gap-2 text-mau-blue hover:text-mau-dark-blue"
                 >
                   <ArrowLeft size={16} />
                   Back
                 </Button>
                 <div></div>
               </div>
-              <CardTitle className="text-2xl text-green-800">New Student Registration</CardTitle>
+              <CardTitle className="text-2xl text-mau-blue">New Student Registration</CardTitle>
               <CardDescription>
                 Create your MAU Assistant account
               </CardDescription>
@@ -285,7 +285,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onBack, onSignUp }) => {
 
                 <Button 
                   type="submit" 
-                  className="w-full bg-green-700 hover:bg-green-800 text-white py-2 rounded-md transition-colors"
+                  className="w-full bg-mau-blue hover:bg-mau-dark-blue text-white py-2 rounded-md transition-colors"
                 >
                   Create Account & Access MAU Assistant
                 </Button>
