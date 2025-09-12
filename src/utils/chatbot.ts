@@ -87,9 +87,9 @@ function generateResponse(intent: string, message: string, userData: UserData): 
     case 'academic':
       if (message.toLowerCase().includes('grading') || message.toLowerCase().includes('grade')) {
         return `MAU uses a 5-point grading system:
-        
+
 A: 5.0 points (70-100%)
-B: 4.0 points (60-69%)
+B: 4.0 points (60-69%)  
 C: 3.0 points (50-59%)
 D: 2.0 points (45-49%)
 E: 1.0 points (40-44%)
@@ -102,9 +102,9 @@ Your CGPA is calculated based on the total grade points earned divided by total 
         return `Course registration at MAU is done through the Student Portal during designated periods. Here's what you need to know:
 
 Requirements:
-Clear all outstanding fees
-Meet academic requirements for your level
-Get advisor approval
+• Clear all outstanding fees
+• Meet academic requirements for your level  
+• Get advisor approval
 
 Process:
 1. Log into the Student Portal
@@ -120,25 +120,25 @@ Registration periods are announced on the university website and Student Portal.
         return `To access your academic records:
 
 Check Results:
-Log into the Student Portal with your student ID
-Navigate to Academic Records
-View semester results and CGPA
+• Log into the Student Portal with your student ID
+• Navigate to Academic Records
+• View semester results and CGPA
 
 Get Transcript:
-Visit the Academic Office
-Submit transcript application form
-Provide payment receipt and valid ID
-Processing takes 3-5 working days
+• Visit the Academic Office
+• Submit transcript application form
+• Provide payment receipt and valid ID
+• Processing takes 3-5 working days
 
 Need help with your Student Portal login? Contact ICT Support.`;
       }
       
       return `I can help you with academic matters including:
-Course registration and add/drop procedures
-Grading system and CGPA calculation
-Result checking and transcript requests
-Academic calendar and important dates
-Examination procedures
+• Course registration and add/drop procedures
+• Grading system and CGPA calculation
+• Result checking and transcript requests
+• Academic calendar and important dates
+• Examination procedures
 
 What specific academic information do you need?`;
     
@@ -146,18 +146,18 @@ What specific academic information do you need?`;
       return `MAU offers several payment methods for school fees:
 
 Payment Options:
-Online payment via Student Portal
-Bank transfer to university account
-POS payment at designated campus centers
+• Online payment via Student Portal
+• Bank transfer to university account
+• POS payment at designated campus centers
 
 Bank Details:
 Contact the Bursary Department for current bank account details.
 
 Important Notes:
-Payment deadlines are announced each semester
-Late payments may incur penalty fees
-Keep payment receipts for your records
-Installment options may be available (contact Bursary)
+• Payment deadlines are announced each semester
+• Late payments may incur penalty fees
+• Keep payment receipts for your records
+• Installment options may be available (contact Bursary)
 
 Need help with online payment? Contact ICT Support at the Help Desk.`;
     
@@ -165,19 +165,19 @@ Need help with online payment? Contact ICT Support at the Help Desk.`;
       return `Course registration information for ${userData.level} students:
 
 Registration Periods:
-Announced on university website and Student Portal
-Usually at the beginning of each semester
-Late registration available with penalty fees
+• Announced on university website and Student Portal
+• Usually at the beginning of each semester
+• Late registration available with penalty fees
 
 Requirements:
-All fees must be paid
-Academic standing requirements met
-Advisor approval required
+• All fees must be paid
+• Academic standing requirements met
+• Advisor approval required
 
 Add/Drop Period:
-First 2 weeks of semester
-Use Student Portal or visit Academic Office
-May require additional approvals
+• First 2 weeks of semester
+• Use Student Portal or visit Academic Office
+• May require additional approvals
 
 Need Help?
 Contact your Faculty Academic Office or visit the main Academic Office for assistance.`;
@@ -189,8 +189,8 @@ Modibbo Adama University
 PMB 2076, Yola
 Adamawa State, Nigeria
 
-Established: 1981 (Renamed in 2021)
-Motto: "Knowledge and Humanism"
+• Established: 1981 (Renamed in 2021)
+• Motto: "Knowledge and Humanism"
 
 The campus is easily accessible by public transport and private vehicles. Parking facilities are available on campus.`;
       }
@@ -199,21 +199,21 @@ The campus is easily accessible by public transport and private vehicles. Parkin
         return `MAU Library Services:
 
 Operating Hours:
-Monday-Friday: 8:00 AM - 10:00 PM
-Saturday: 9:00 AM - 6:00 PM
-Closed on Sundays and public holidays
+• Monday-Friday: 8:00 AM - 10:00 PM
+• Saturday: 9:00 AM - 6:00 PM
+• Closed on Sundays and public holidays
 
 Services Available:
-Study spaces and reading rooms
-Computer lab with internet access
-Research assistance
-Digital resources and databases
-Printing and photocopying
+• Study spaces and reading rooms
+• Computer lab with internet access
+• Research assistance
+• Digital resources and databases
+• Printing and photocopying
 
 Resources:
-Academic books and journals
-Past questions and project materials
-Online databases and e-books
+• Academic books and journals
+• Past questions and project materials
+• Online databases and e-books
 
 Visit the library for quiet study spaces and research support!`;
       }
@@ -222,31 +222,31 @@ Visit the library for quiet study spaces and research support!`;
         return `MAU Accommodation:
 
 Application Process:
-Apply through Student Affairs Office
-Submit required documents
-Pay accommodation fees
-Allocation based on availability
+• Apply through Student Affairs Office
+• Submit required documents
+• Pay accommodation fees
+• Allocation based on availability
 
 Requirements:
-Completed accommodation form
-Passport photographs
-Admission letter (for new students)
-Payment receipt
+• Completed accommodation form
+• Passport photographs
+• Admission letter (for new students)
+• Payment receipt
 
 Facilities:
-Male and female hostels available
-Basic furnishing provided
-Common areas and study spaces
+• Male and female hostels available
+• Basic furnishing provided
+• Common areas and study spaces
 
 Contact: Student Affairs Office for current availability and rates.`;
       }
       
       return `I can provide information about MAU campus including:
-Campus location and directions
-Library services and hours
-Hostel accommodation
-Campus facilities and buildings
-Transportation and parking
+• Campus location and directions
+• Library services and hours
+• Hostel accommodation
+• Campus facilities and buildings
+• Transportation and parking
 
 What specific campus information do you need?`;
     
@@ -254,25 +254,25 @@ What specific campus information do you need?`;
       return `MAU Contact Information:
 
 Emergency Contacts:
-Security: Campus Security Office
-Medical: University Health Center
-Fire Emergency: Contact Security immediately
+• Security: Campus Security Office
+• Medical: University Health Center
+• Fire Emergency: Contact Security immediately
 
 Academic Support:
-Faculty Academic Office
-Head of Department
-Academic Advisor
-Main Academic Office
+• Faculty Academic Office
+• Head of Department
+• Academic Advisor
+• Main Academic Office
 
 ICT Support:
-ICT Help Desk
-Hours: Monday-Friday, 8:00 AM - 5:00 PM
-Services: Student Portal, email setup, WiFi assistance
+• ICT Help Desk
+• Hours: Monday-Friday, 8:00 AM - 5:00 PM
+• Services: Student Portal, email setup, WiFi assistance
 
 Administrative Offices:
-Bursary Department (fees and payments)
-Student Affairs (accommodation, student life)
-Registry (transcripts, certificates)
+• Bursary Department (fees and payments)
+• Student Affairs (accommodation, student life)
+• Registry (transcripts, certificates)
 
 Need a specific department contact? Let me know what you're looking for!`;
     
@@ -283,25 +283,25 @@ Vice-Chancellor:
 Prof. Ibrahim Umar
 
 Deputy Vice-Chancellors:
-Deputy VC (Academic)
-Deputy VC (Administration)
+• Deputy VC (Academic)
+• Deputy VC (Administration)
 
 Administrative Structure:
-Registrar
-Bursar
-Librarian
-Various Deans of Faculties
+• Registrar
+• Bursar
+• Librarian
+• Various Deans of Faculties
 
 Each faculty has its own Dean and administrative structure. The university leadership is committed to academic excellence and student welfare.`;
     
     default:
       return `I'm here to help you with information about MAU! I can assist with:
 
-Academic: Course registration, grading, results, transcripts
-Payments: Fee payment methods and procedures
-Campus: Location, facilities, library, accommodation
-Contacts: Department contacts and emergency information
-Student Life: Clubs, activities, and campus services
+• Academic: Course registration, grading, results, transcripts
+• Payments: Fee payment methods and procedures
+• Campus: Location, facilities, library, accommodation
+• Contacts: Department contacts and emergency information
+• Student Life: Clubs, activities, and campus services
 
 What would you like to know more about?`;
   }

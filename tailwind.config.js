@@ -4,11 +4,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        'mau-blue': '#1e3a8a',
-        'mau-light-blue': '#3b82f6',
-        'mau-dark-blue': '#1e40af',
-        'mau-accent': '#f59e0b',
-        'mau-gray': '#6b7280',
+        'mau-primary': '#0066cc',
+        'mau-secondary': '#004499',
+        'mau-accent': '#0080ff',
+        'mau-light': '#e6f3ff',
+        'mau-dark': '#003366',
+        'mau-gold': '#ffd700',
+        'mau-gray': '#f8f9fa',
       }
     },
   },

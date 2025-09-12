@@ -14,26 +14,26 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className={`flex items-start gap-3 mb-4 ${
+      className={`flex items-start gap-3 mb-6 ${
         message.isUser ? 'flex-row-reverse' : 'flex-row'
       }`}
     >
       <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
         message.isUser 
-          ? 'bg-mau-blue text-white' 
-          : 'bg-gray-200 text-gray-600'
+          ? 'bg-mau-primary text-white' 
+          : 'bg-mau-light text-mau-primary'
       }`}>
         {message.isUser ? <User size={16} /> : <Bot size={16} />}
       </div>
       
       <div className={`max-w-[80%] ${message.isUser ? 'text-right' : 'text-left'}`}>
-        <div className={`inline-block p-3 rounded-lg ${
+        <div className={`inline-block p-4 rounded-2xl shadow-sm ${
           message.isUser
-            ? 'bg-mau-blue text-white rounded-br-sm'
-            : 'bg-gray-100 text-gray-800 rounded-bl-sm'
+            ? 'bg-mau-primary text-white rounded-br-sm'
+            : 'bg-white text-gray-800 rounded-bl-sm border'
         }`}>
-          <div className="text-sm leading-relaxed whitespace-pre-wrap">
-            {message.content.replace(/\*\*(.*?)\*\*/g, '$1')}
+          <div className="text-sm leading-relaxed whitespace-pre-wrap break-words">
+            {message.content}
           </div>
         </div>
         
@@ -42,7 +42,7 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message }) => {
         }`}>
           {format(message.timestamp, 'HH:mm')}
           {message.intent && (
-            <span className="ml-2 text-mau-blue">
+            <span className="ml-2 text-mau-primary">
               • {message.intent}
             </span>
           )}

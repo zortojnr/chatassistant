@@ -71,7 +71,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-mau-blue via-mau-dark-blue to-blue-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-mau-primary via-mau-secondary to-mau-dark flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* University Logo */}
         <motion.div
@@ -80,7 +80,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-center mb-8"
         >
-          <div className="w-24 h-24 mx-auto mb-4 bg-white rounded-full shadow-lg flex items-center justify-center p-3">
+          <div className="w-24 h-24 mx-auto mb-4 bg-white rounded-full shadow-lg flex items-center justify-center p-2">
             <img 
               src="/MAU.jpg" 
               alt="MAU Logo" 
@@ -117,7 +117,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: universityName.length * 0.1 + 0.5 }}
-            className="text-green-200 text-sm mt-2"
+            className="text-mau-light text-sm mt-2"
           >
             Knowledge and Humanism
           </motion.p>
@@ -134,7 +134,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
         >
           <Card className="bg-white/95 backdrop-blur-sm shadow-2xl">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl text-mau-blue">Student Login</CardTitle>
+              <CardTitle className="text-2xl text-mau-primary">Student Login</CardTitle>
               <CardDescription>
                 Access your MAU Assistant Dashboard
               </CardDescription>
@@ -201,7 +201,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
 
                 <Button 
                   type="submit" 
-                  className="w-full bg-mau-blue hover:bg-mau-dark-blue text-white py-2 rounded-md transition-colors mb-4"
+                  className="w-full bg-mau-primary hover:bg-mau-secondary text-white py-2 rounded-md transition-colors mb-4"
                 >
                   Access MAU Assistant
                 </Button>
@@ -214,7 +214,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
                     type="button"
                     onClick={onSignUp}
                     variant="outline"
-                    className="w-full border-mau-blue text-mau-blue hover:bg-blue-50 flex items-center justify-center gap-2"
+                    className="w-full border-mau-primary text-mau-primary hover:bg-mau-light flex items-center justify-center gap-2"
                   >
                     <UserPlus size={16} />
                     Sign Up as New Student

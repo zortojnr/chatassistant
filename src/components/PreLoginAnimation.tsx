@@ -38,7 +38,7 @@ const PreLoginAnimation: React.FC<PreLoginAnimationProps> = ({ onComplete }) => 
   }, [currentWordIndex, currentLetterIndex, currentWord.length, onComplete]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-mau-blue via-mau-dark-blue to-blue-900 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-mau-primary via-mau-secondary to-mau-dark flex items-center justify-center">
       <div className="text-center">
         {/* University Logo */}
         <motion.div
@@ -47,7 +47,7 @@ const PreLoginAnimation: React.FC<PreLoginAnimationProps> = ({ onComplete }) => 
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="mb-8"
         >
-          <div className="w-32 h-32 mx-auto mb-6 bg-white rounded-full shadow-2xl flex items-center justify-center p-4">
+          <div className="w-32 h-32 mx-auto mb-6 bg-white rounded-full shadow-2xl flex items-center justify-center p-3">
             <img 
               src="/MAU.jpg" 
               alt="MAU Logo" 
@@ -92,7 +92,7 @@ const PreLoginAnimation: React.FC<PreLoginAnimationProps> = ({ onComplete }) => 
           initial={{ opacity: 0 }}
           animate={{ opacity: currentWordIndex >= words.length ? 1 : 0 }}
           transition={{ delay: 0.5, duration: 0.8 }}
-          className="text-blue-200 text-lg mt-6"
+          className="text-mau-light text-lg mt-6"
         >
           Knowledge and Humanism
         </motion.p>

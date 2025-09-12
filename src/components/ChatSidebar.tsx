@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ChevronDown, 
@@ -8,12 +8,9 @@ import {
   CreditCard, 
   MapPin, 
   Users, 
-  Phone,
-  X,
-  Menu
+  Phone
 } from 'lucide-react';
 import { QUICK_INFO } from '../data/quickInfo';
-import { Button } from './ui/button';
 
 interface ChatSidebarProps {
   onQuickReply: (message: string) => void;
@@ -33,6 +30,21 @@ const iconMap = {
 const ChatSidebar: React.FC<ChatSidebarProps> = ({ onQuickReply, isOpen, onToggle }) => {
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
 
+  // Close sidebar on mobile when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isOpen && window.innerWidth < 768) {
+        const sidebar = document.getElementById('chat-sidebar');
+        if (sidebar && !sidebar.contains(event.target as Node)) {
+          onToggle();
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen, onToggle]);
+
   const toggleCategory = (categoryId: string) => {
     setExpandedCategories(prev =>
       prev.includes(categoryId)
@@ -43,25 +55,13 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ onQuickReply, isOpen, onToggl
 
   const handleQuickReply = (answer: string) => {
     onQuickReply(answer);
-    if (window.innerWidth < 768) {
-      onToggle(); // Close sidebar on mobile after selection
-    }
   };
 
   return (
     <>
-      {/* Mobile Toggle Button */}
-      <Button
-        onClick={onToggle}
-        className="md:hidden fixed top-4 right-4 z-50 bg-mau-blue hover:bg-mau-dark-blue text-white p-2 rounded-full shadow-lg"
-        size="icon"
-      >
-        {isOpen ? <X size={20} /> : <Menu size={20} />}
-      </Button>
-
       {/* Overlay for mobile */}
       <AnimatePresence>
-        {isOpen && (
+        {isOpen && window.innerWidth < 768 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -74,13 +74,16 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ onQuickReply, isOpen, onToggl
 
       {/* Sidebar */}
       <motion.div
+        id="chat-sidebar"
         initial={{ x: '100%' }}
-        animate={{ x: isOpen ? 0 : '100%' }}
+        animate={{ 
+          x: isOpen ? 0 : window.innerWidth < 768 ? '100%' : 0 
+        }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed md:relative right-0 top-0 h-full w-80 bg-white border-l border-gray-200 shadow-lg z-40 md:z-0 md:translate-x-0 md:shadow-none"
+        className="fixed md:relative right-0 top-0 h-full w-80 bg-white border-l border-gray-200 shadow-xl z-40 md:z-0 md:shadow-sm"
       >
         <div className="h-full flex flex-col">
-          <div className="p-4 border-b border-gray-200">
+          <div className="p-4 border-b border-gray-200 bg-mau-light">
             <h2 className="text-lg font-semibold text-gray-800">Quick Help</h2>
             <p className="text-sm text-gray-600">Find answers instantly</p>
           </div>
@@ -91,13 +94,13 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ onQuickReply, isOpen, onToggl
               const isExpanded = expandedCategories.includes(category.id);
 
               return (
-                <div key={category.id} className="border border-gray-200 rounded-lg">
+                <div key={category.id} className="border border-gray-200 rounded-lg hover:shadow-sm transition-shadow">
                   <button
                     onClick={() => toggleCategory(category.id)}
-                    className="w-full p-3 flex items-center justify-between text-left hover:bg-gray-50 transition-colors rounded-lg"
+                    className="w-full p-3 flex items-center justify-between text-left hover:bg-mau-light/50 transition-colors rounded-lg"
                   >
                     <div className="flex items-center gap-2">
-                      <IconComponent size={18} className="text-mau-blue" />
+                      <IconComponent size={18} className="text-mau-primary" />
                       <span className="font-medium text-gray-800">
                         {category.title}
                       </span>
@@ -123,7 +126,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ onQuickReply, isOpen, onToggl
                             <button
                               key={index}
                               onClick={() => handleQuickReply(item.answer)}
-                              className="w-full text-left p-2 text-sm text-gray-600 hover:bg-blue-50 hover:text-mau-blue rounded transition-colors"
+                              className="w-full text-left p-2 text-sm text-gray-600 hover:bg-mau-light hover:text-mau-primary rounded transition-colors"
                             >
                               {item.question}
                             </button>
@@ -137,9 +140,9 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ onQuickReply, isOpen, onToggl
             })}
           </div>
 
-          <div className="p-4 border-t border-gray-200 bg-gray-50">
+          <div className="p-4 border-t border-gray-200 bg-mau-light/30">
             <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-2 bg-white rounded-lg shadow-sm flex items-center justify-center p-2">
+              <div className="w-12 h-12 mx-auto mb-2 bg-white rounded-full shadow-sm flex items-center justify-center p-2">
                 <img 
                   src="/MAU.jpg" 
                   alt="MAU Logo" 
