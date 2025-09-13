@@ -3,15 +3,19 @@ import { useState } from 'react';
 import PreLoginAnimation from './components/PreLoginAnimation';
 import LoginScreen from './components/LoginScreen';
 import SignUpScreen from './components/SignUpScreen';
+import AdminLogin from './components/AdminLogin';
+import AdminDashboard from './components/AdminDashboard';
 import ChatInterface from './components/ChatInterface';
-import { UserData } from './types/user';
+import { AuthUser } from './types/user';
 
 function App() {
-  const [user, setUser] = useState<UserData | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [admin, setAdmin] = useState<any>(null);
   const [showPreLogin, setShowPreLogin] = useState(true);
   const [showSignUp, setShowSignUp] = useState(false);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
 
-  const handleLogin = (userData: UserData) => {
+  const handleLogin = (userData: AuthUser) => {
     setUser(userData);
   };
 
@@ -19,10 +23,22 @@ function App() {
     setUser(userData);
   };
 
+  const handleAdminLogin = (adminData: any) => {
+    setAdmin(adminData);
+  };
+
   const handleLogout = () => {
     setUser(null);
+    setAdmin(null);
     setShowPreLogin(true);
     setShowSignUp(false);
+    setShowAdminLogin(false);
+  };
+
+  const handleBackToLogin = () => {
+    setShowPreLogin(true);
+    setShowSignUp(false);
+    setShowAdminLogin(false);
   };
 
   if (showPreLogin) {
@@ -33,12 +49,27 @@ function App() {
     );
   }
 
+  if (showAdminLogin) {
+    return (
+      <AdminLogin 
+        onLogin={handleAdminLogin}
+        onBack={handleBackToLogin}
+      />
+    );
+  }
+
   if (showSignUp) {
     return (
       <SignUpScreen 
-        onBack={() => setShowSignUp(false)}
+        onBack={handleBackToLogin}
         onSignUp={handleSignUp}
       />
+    );
+  }
+
+  if (admin) {
+    return (
+      <AdminDashboard onLogout={handleLogout} />
     );
   }
 
@@ -47,6 +78,7 @@ function App() {
       <LoginScreen 
         onLogin={handleLogin} 
         onSignUp={() => setShowSignUp(true)}
+        onAdminLogin={() => setShowAdminLogin(true)}
       />
     );
   }

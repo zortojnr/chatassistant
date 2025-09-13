@@ -5,6 +5,16 @@ export interface UserData {
   year: string;
 }
 
+export interface AuthUser extends UserData {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber?: string;
+  studentType?: string;
+  department?: string;
+}
+
 export interface ChatMessage {
   id: string;
   content: string;
@@ -12,6 +22,14 @@ export interface ChatMessage {
   timestamp: Date;
   intent?: string;
   confidence?: number;
+}
+
+export interface ChatSession {
+  id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  messages?: ChatMessage[];
 }
 
 export interface QuickInfoCategory {

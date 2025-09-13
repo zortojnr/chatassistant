@@ -1,27 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { UserPlus } from 'lucide-react';
+import { UserPlus, Eye, EyeOff, Shield } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { FACULTIES, ACADEMIC_LEVELS } from '../data/faculties';
-import { UserData } from '../types/user';
+import { AuthUser } from '../types/user';
+import { loginStudent } from '../lib/auth';
 
 interface LoginScreenProps {
-  onLogin: (userData: UserData) => void;
+  onLogin: (userData: AuthUser) => void;
   onSignUp: () => void;
+  onAdminLogin: () => void;
 }
 
-const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
+const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLogin }) => {
   const [animationComplete, setAnimationComplete] = useState(false);
   const [formData, setFormData] = useState({
     studentId: '',
+    password: '',
     faculty: '',
     level: '',
     year: new Date().getFullYear().toString()
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const universityName = "MODIBBO ADAMA UNIVERSITY";
 
@@ -38,7 +43,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
     return pattern.test(id);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
@@ -46,6 +51,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
       newErrors.studentId = 'Student ID is required';
     } else if (!validateStudentId(formData.studentId)) {
       newErrors.studentId = 'Invalid format. Use: CSC/20U/1234';
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
     }
 
     if (!formData.faculty) {
@@ -59,7 +68,19 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      onLogin(formData);
+      setIsLoading(true);
+      try {
+        const userData = await loginStudent(formData.studentId, formData.password);
+        if (userData) {
+          onLogin(userData);
+        } else {
+          setErrors({ general: 'Invalid student ID or password' });
+        }
+      } catch (error) {
+        setErrors({ general: 'Login failed. Please try again.' });
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -67,6 +88,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+    if (errors.general) {
+      setErrors(prev => ({ ...prev, general: '' }));
     }
   };
 
@@ -141,6 +165,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
+                {errors.general && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                    <p className="text-red-600 text-sm">{errors.general}</p>
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Student ID
@@ -151,9 +181,36 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
                     value={formData.studentId}
                     onChange={(e) => handleInputChange('studentId', e.target.value.toUpperCase())}
                     className={errors.studentId ? 'border-red-500' : ''}
+                    disabled={isLoading}
                   />
                   {errors.studentId && (
                     <p className="text-red-500 text-xs mt-1">{errors.studentId}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Enter your password"
+                      value={formData.password}
+                      onChange={(e) => handleInputChange('password', e.target.value)}
+                      className={errors.password ? 'border-red-500 pr-10' : 'pr-10'}
+                      disabled={isLoading}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                  {errors.password && (
+                    <p className="text-red-500 text-xs mt-1">{errors.password}</p>
                   )}
                 </div>
 
@@ -202,8 +259,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
                 <Button 
                   type="submit" 
                   className="w-full bg-mau-primary hover:bg-mau-secondary text-white py-2 rounded-md transition-colors mb-4"
+                  disabled={isLoading}
                 >
-                  Access MAU Assistant
+                  {isLoading ? 'Signing In...' : 'Access MAU Assistant'}
                 </Button>
 
                 <div className="text-center">
@@ -220,7 +278,25 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp }) => {
                     Sign Up as New Student
                   </Button>
                 </div>
+
+                <div className="pt-4 border-t border-gray-200">
+                  <Button
+                    type="button"
+                    onClick={onAdminLogin}
+                    variant="ghost"
+                    className="w-full text-mau-primary hover:bg-mau-light flex items-center justify-center gap-2"
+                  >
+                    <Shield size={16} />
+                    Admin Access
+                  </Button>
+                </div>
               </form>
+
+              <div className="mt-4 p-3 bg-mau-light rounded-md">
+                <p className="text-xs text-gray-600 text-center">
+                  Demo: Any valid Student ID with password "password"
+                </p>
+              </div>
             </CardContent>
           </Card>
         </motion.div>

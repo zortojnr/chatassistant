@@ -1,31 +1,34 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Send, LogOut, Loader2, Menu, X } from 'lucide-react';
+import { Send, LogOut, Loader2, Menu, X, Plus, MessageSquare, History } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import ChatBubble from './ChatBubble';
 import ChatSidebar from './ChatSidebar';
-import { UserData, ChatMessage } from '../types/user';
+import { AuthUser, ChatMessage, ChatSession } from '../types/user';
 import { processMessage } from '../utils/chatbot';
+import { 
+  createChatSession, 
+  getChatSessions, 
+  saveChatMessage, 
+  getChatMessages,
+  updateChatSession 
+} from '../lib/chatHistory';
+import { generateAIResponse } from '../lib/openai';
 
 interface ChatInterfaceProps {
-  userData: UserData;
+  userData: AuthUser;
   onLogout: () => void;
 }
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: '1',
-      content: `Welcome to MAU Assistant, ${userData.studentId}! 👋\n\nI'm here to help you with academic information, registration, payments, campus services, and more. How can I assist you today?`,
-      isUser: false,
-      timestamp: new Date(),
-      intent: 'greeting'
-    }
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -36,6 +39,54 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    initializeChat();
+  }, [userData.id]);
+
+  const initializeChat = async () => {
+    // Load chat sessions
+    const sessions = await getChatSessions(userData.id);
+    setChatSessions(sessions);
+
+    if (sessions.length > 0) {
+      // Load the most recent session
+      const latestSession = sessions[0];
+      setCurrentSessionId(latestSession.id);
+      const sessionMessages = await getChatMessages(latestSession.id);
+      setMessages(sessionMessages);
+    } else {
+      // Create a new session
+      await createNewChat();
+    }
+  };
+
+  const createNewChat = async () => {
+    const sessionId = await createChatSession(userData.id, 'New Chat');
+    if (sessionId) {
+      setCurrentSessionId(sessionId);
+      const welcomeMessage: ChatMessage = {
+        id: '1',
+        content: `Welcome to MAU Assistant, ${userData.firstName || userData.studentId}! 👋\n\nI'm here to help you with academic information, registration, payments, campus services, and more. How can I assist you today?`,
+        isUser: false,
+        timestamp: new Date(),
+        intent: 'greeting'
+      };
+      setMessages([welcomeMessage]);
+      await saveChatMessage(sessionId, welcomeMessage);
+      
+      // Refresh sessions list
+      const sessions = await getChatSessions(userData.id);
+      setChatSessions(sessions);
+    }
+  };
+
+  const loadChatSession = async (sessionId: string) => {
+    setCurrentSessionId(sessionId);
+    const sessionMessages = await getChatMessages(sessionId);
+    setMessages(sessionMessages);
+    setShowHistory(false);
+  };
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
@@ -48,23 +99,52 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
     };
 
     setMessages(prev => [...prev, userMessage]);
+    
+    // Save user message
+    if (currentSessionId) {
+      await saveChatMessage(currentSessionId, userMessage);
+    }
+    
     setInputMessage('');
     setIsTyping(true);
 
     try {
-      const response = await processMessage(inputMessage, userData);
+      // Try AI response first, fallback to rule-based
+      let responseContent: string;
+      try {
+        const context = `Student: ${userData.studentId}, Faculty: ${userData.faculty}, Level: ${userData.level}`;
+        responseContent = await generateAIResponse(inputMessage, context);
+      } catch (aiError) {
+        console.log('AI response failed, using fallback:', aiError);
+        const response = await processMessage(inputMessage, userData);
+        responseContent = response.content;
+      }
       
       setTimeout(() => {
         const botMessage: ChatMessage = {
           id: (Date.now() + 1).toString(),
-          content: response.content,
+          content: responseContent,
           isUser: false,
           timestamp: new Date(),
-          intent: response.intent,
-          confidence: response.confidence
+          intent: 'ai_response',
+          confidence: 0.9
         };
 
         setMessages(prev => [...prev, botMessage]);
+        
+        // Save bot message
+        if (currentSessionId) {
+          saveChatMessage(currentSessionId, botMessage);
+          
+          // Update session title if it's the first user message
+          if (messages.length === 1) {
+            const title = inputMessage.length > 30 
+              ? inputMessage.substring(0, 30) + '...' 
+              : inputMessage;
+            updateChatSession(currentSessionId, title);
+          }
+        }
+        
         setIsTyping(false);
       }, 800 + Math.random() * 400);
     } catch (error) {
@@ -93,15 +173,60 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
     setSidebarOpen(false); // Close sidebar after quick reply
   };
 
+  const renderChatHistory = () => (
+    <div className="absolute top-16 left-4 w-80 bg-white rounded-lg shadow-xl border z-50 max-h-96 overflow-y-auto">
+      <div className="p-4 border-b">
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-mau-primary">Chat History</h3>
+          <Button
+            onClick={() => setShowHistory(false)}
+            variant="ghost"
+            size="sm"
+          >
+            <X size={16} />
+          </Button>
+        </div>
+      </div>
+      <div className="p-2">
+        <Button
+          onClick={createNewChat}
+          className="w-full mb-2 bg-mau-primary hover:bg-mau-secondary text-white flex items-center gap-2"
+          size="sm"
+        >
+          <Plus size={16} />
+          New Chat
+        </Button>
+        <div className="space-y-1">
+          {chatSessions.map((session) => (
+            <button
+              key={session.id}
+              onClick={() => loadChatSession(session.id)}
+              className={`w-full text-left p-2 rounded hover:bg-mau-light transition-colors ${
+                currentSessionId === session.id ? 'bg-mau-light border border-mau-primary' : ''
+              }`}
+            >
+              <div className="font-medium text-sm text-gray-800 truncate">
+                {session.title}
+              </div>
+              <div className="text-xs text-gray-500">
+                {new Date(session.updated_at).toLocaleDateString()}
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="h-screen flex bg-mau-gray relative overflow-hidden">
       {/* Fixed Background Logo */}
-      <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-0">
-        <div className="w-48 h-48 opacity-3">
+      <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-0 opacity-5">
+        <div className="w-48 h-48">
           <img 
             src="/MAU.jpg" 
             alt="MAU Logo Background" 
-            className="w-full h-full object-contain rounded-full"
+            className="w-full h-full object-contain"
           />
         </div>
       </div>
@@ -112,11 +237,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
         <div className="bg-mau-primary shadow-sm border-b border-mau-secondary/20">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 p-4">
-              <div className="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center p-1.5">
+              <div className="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center p-2">
                 <img 
                   src="/MAU.jpg" 
                   alt="MAU Logo" 
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-contain rounded-full"
                 />
               </div>
               <div>
@@ -129,6 +254,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
               </div>
             </div>
             <div className="flex items-center gap-2 p-4">
+              {/* Chat History Button */}
+              <Button
+                onClick={() => setShowHistory(!showHistory)}
+                variant="ghost"
+                size="sm"
+                className="hidden md:flex items-center gap-2 text-white hover:bg-mau-secondary"
+              >
+                <History size={16} />
+                History
+              </Button>
+              
               {/* Mobile Menu Button */}
               <Button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -161,6 +297,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
             </div>
           </div>
         </div>
+
+        {/* Chat History Dropdown */}
+        {showHistory && renderChatHistory()}
 
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto relative">
@@ -213,7 +352,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
               </Button>
             </div>
             <p className="text-xs text-gray-500 mt-2 text-center">
-              MAU Assistant can help with academic, administrative, and campus information
+              MAU Assistant • Powered by AI • Chat history saved automatically
             </p>
           </div>
         </div>
