@@ -300,7 +300,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
 
               <div className="mt-4 p-3 bg-mau-light rounded-md">
                 <p className="text-xs text-gray-600 text-center">
-                  Demo: CSC/20U/1234, ENG/21U/5678, PHY/22U/9012, BIO/20U/3456, EDU/19U/7890 + password "password"
+                  Use any valid Student ID format (e.g., CSC/20U/1234, ENG/21U/5678, PHY/22U/9012) + password "password"
                 </p>
               </div>
             </CardContent>

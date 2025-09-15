@@ -90,6 +90,19 @@ export async function loginStudent(studentId: string, password: string): Promise
   try {
     console.log('Attempting login with:', studentId, password);
     
+    // Check if password is correct first
+    if (password !== 'password') {
+      console.log('Password mismatch');
+      return null;
+    }
+
+    // Validate student ID format (XXX/YYZ/NNNN)
+    const studentIdPattern = /^[A-Z]{3}\/\d{2}[A-Z]\/\d{4}$/;
+    if (!studentIdPattern.test(studentId)) {
+      console.log('Invalid student ID format');
+      return null;
+    }
+
     // Try Supabase first, fallback to mock data
     try {
       const { data, error } = await supabase
@@ -99,12 +112,6 @@ export async function loginStudent(studentId: string, password: string): Promise
         .single();
 
       if (!error && data) {
-        // For now, use default password "password" for all students
-        if (password !== 'password') {
-          console.log('Password mismatch for Supabase user');
-          return null;
-        }
-
         return {
           id: data.id,
           studentId: data.student_id,
@@ -123,33 +130,54 @@ export async function loginStudent(studentId: string, password: string): Promise
       console.log('Supabase not available, using mock data');
     }
 
-    // Fallback to mock data
-    const mockStudent = MOCK_STUDENTS.find(s => s.student_id === studentId);
-    console.log('Found mock student:', mockStudent);
+    // Generate student data from ID format for any valid student ID
+    const facultyMap: { [key: string]: string } = {
+      'CSC': 'Faculty of Computing',
+      'ENG': 'Faculty of Engineering',
+      'PHY': 'Faculty of Physical Science',
+      'BIO': 'Faculty of Life Science',
+      'EDU': 'Faculty of Education',
+      'CHE': 'Faculty of Engineering',
+      'CIV': 'Faculty of Engineering',
+      'EEE': 'Faculty of Engineering',
+      'MEE': 'Faculty of Engineering',
+      'MAT': 'Faculty of Physical Science',
+      'STA': 'Faculty of Physical Science',
+      'GEO': 'Faculty of Physical Science',
+      'BOT': 'Faculty of Life Science',
+      'ZOO': 'Faculty of Life Science',
+      'MIC': 'Faculty of Life Science',
+      'BCH': 'Faculty of Life Science'
+    };
+
+    const departmentCode = studentId.substring(0, 3);
+    const yearCode = studentId.substring(4, 6);
+    const faculty = facultyMap[departmentCode] || 'Faculty of Computing';
     
-    if (!mockStudent) {
-      console.log('No student found with ID:', studentId);
-      return null;
-    }
+    // Generate level based on current year and admission year
+    const currentYear = new Date().getFullYear();
+    const admissionYear = 2000 + parseInt(yearCode);
+    const yearsSinceAdmission = currentYear - admissionYear;
+    let level = '100 Level';
+    
+    if (yearsSinceAdmission >= 4) level = '500 Level';
+    else if (yearsSinceAdmission >= 3) level = '400 Level';
+    else if (yearsSinceAdmission >= 2) level = '300 Level';
+    else if (yearsSinceAdmission >= 1) level = '200 Level';
 
-    if (password !== 'password') {
-      console.log('Password mismatch for mock user');
-      return null;
-    }
-
-    console.log('Login successful for:', mockStudent.student_id);
+    console.log('Login successful for:', studentId);
     return {
-      id: mockStudent.id,
-      studentId: mockStudent.student_id,
-      email: mockStudent.email,
-      firstName: mockStudent.first_name,
-      lastName: mockStudent.last_name,
-      faculty: mockStudent.faculty,
-      level: mockStudent.level,
-      year: mockStudent.year,
-      phoneNumber: mockStudent.phone_number,
-      studentType: mockStudent.student_type,
-      department: mockStudent.department,
+      id: Date.now().toString(),
+      studentId: studentId,
+      email: `${studentId.toLowerCase().replace(/\//g, '.')}@mau.edu.ng`,
+      firstName: 'Student',
+      lastName: 'User',
+      faculty: faculty,
+      level: level,
+      year: currentYear.toString(),
+      phoneNumber: '08012345678',
+      studentType: 'Regular Undergraduate',
+      department: departmentCode,
     };
   } catch (error) {
     console.error('Login error:', error);
