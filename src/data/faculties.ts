@@ -1,11 +1,9 @@
 export const FACULTIES = [
-  'Faculty of Agriculture',
-  'Faculty of Arts',
-  'Faculty of Computing',
-  'Faculty of Education',
   'Faculty of Engineering',
-  'Faculty of Law',
-  'Faculty of Management Sciences',
+  'Faculty of Computing',
+  'Faculty of Physical Science',
+  'Faculty of Life Science',
+  'Faculty of Education',
 ];
 
 export const ACADEMIC_LEVELS = [

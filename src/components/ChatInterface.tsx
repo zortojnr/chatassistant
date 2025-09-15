@@ -249,7 +249,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
                   MAU Assistant
                 </h1>
                 <p className="text-sm text-blue-200">
-                  {userData.faculty} • {userData.level}
+                  Demo: CSC/20U/1234, ENG/21U/5678, PHY/22U/9012, BIO/20U/3456, EDU/19U/7890 + password "password"
                 </p>
               </div>
             </div>
@@ -280,8 +280,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 variant="ghost"
                 size="sm"
-                className="hidden md:flex items-center gap-2 text-white hover:bg-mau-secondary"
+                className="flex items-center gap-2 text-white hover:bg-mau-secondary"
               >
+                <Menu size={16} />
                 Quick Help
               </Button>
               

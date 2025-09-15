@@ -28,6 +28,45 @@ const MOCK_STUDENTS = [
     phone_number: '08087654321',
     student_type: 'Regular Undergraduate',
     department: 'Civil Engineering'
+  },
+  {
+    id: '3',
+    student_id: 'PHY/22U/9012',
+    email: 'physics@mau.edu.ng',
+    first_name: 'Ahmed',
+    last_name: 'Ibrahim',
+    faculty: 'Faculty of Physical Science',
+    level: '100 Level',
+    year: '2024',
+    phone_number: '08098765432',
+    student_type: 'Regular Undergraduate',
+    department: 'Physics'
+  },
+  {
+    id: '4',
+    student_id: 'BIO/20U/3456',
+    email: 'biology@mau.edu.ng',
+    first_name: 'Fatima',
+    last_name: 'Yusuf',
+    faculty: 'Faculty of Life Science',
+    level: '400 Level',
+    year: '2024',
+    phone_number: '08076543210',
+    student_type: 'Regular Undergraduate',
+    department: 'Biology'
+  },
+  {
+    id: '5',
+    student_id: 'EDU/19U/7890',
+    email: 'education@mau.edu.ng',
+    first_name: 'Musa',
+    last_name: 'Aliyu',
+    faculty: 'Faculty of Education',
+    level: '500 Level',
+    year: '2024',
+    phone_number: '08065432109',
+    student_type: 'Regular Undergraduate',
+    department: 'Educational Psychology'
   }
 ];
 
@@ -49,6 +88,8 @@ export interface AuthUser extends UserData {
 
 export async function loginStudent(studentId: string, password: string): Promise<AuthUser | null> {
   try {
+    console.log('Attempting login with:', studentId, password);
+    
     // Try Supabase first, fallback to mock data
     try {
       const { data, error } = await supabase
@@ -60,6 +101,7 @@ export async function loginStudent(studentId: string, password: string): Promise
       if (!error && data) {
         // For now, use default password "password" for all students
         if (password !== 'password') {
+          console.log('Password mismatch for Supabase user');
           return null;
         }
 
@@ -83,14 +125,19 @@ export async function loginStudent(studentId: string, password: string): Promise
 
     // Fallback to mock data
     const mockStudent = MOCK_STUDENTS.find(s => s.student_id === studentId);
+    console.log('Found mock student:', mockStudent);
+    
     if (!mockStudent) {
+      console.log('No student found with ID:', studentId);
       return null;
     }
 
     if (password !== 'password') {
+      console.log('Password mismatch for mock user');
       return null;
     }
 
+    console.log('Login successful for:', mockStudent.student_id);
     return {
       id: mockStudent.id,
       studentId: mockStudent.student_id,

@@ -45,6 +45,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Form submitted with data:', formData);
+    
     const newErrors: Record<string, string> = {};
 
     if (!formData.studentId) {
@@ -66,17 +68,21 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
     }
 
     setErrors(newErrors);
+    console.log('Validation errors:', newErrors);
 
     if (Object.keys(newErrors).length === 0) {
       setIsLoading(true);
+      console.log('Attempting login...');
       try {
         const userData = await loginStudent(formData.studentId, formData.password);
+        console.log('Login result:', userData);
         if (userData) {
           onLogin(userData);
         } else {
           setErrors({ general: 'Invalid student ID or password' });
         }
       } catch (error) {
+        console.error('Login error:', error);
         setErrors({ general: 'Login failed. Please try again.' });
       } finally {
         setIsLoading(false);
@@ -294,7 +300,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
 
               <div className="mt-4 p-3 bg-mau-light rounded-md">
                 <p className="text-xs text-gray-600 text-center">
-                  Demo: Any valid Student ID with password "password"
+                  Demo: CSC/20U/1234, ENG/21U/5678, PHY/22U/9012, BIO/20U/3456, EDU/19U/7890 + password "password"
                 </p>
               </div>
             </CardContent>
