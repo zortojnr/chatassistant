@@ -1,4 +1,4 @@
-export const faculties = [
+export const FACULTIES = [
   { id: 'computing', name: 'Computing' },
   { id: 'agriculture', name: 'Agriculture' },
   { id: 'education', name: 'Education' },
