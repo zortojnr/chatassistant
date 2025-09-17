@@ -234,7 +234,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
       {/* Main Chat Container */}
       <div className="flex-1 flex flex-col relative z-10 max-w-4xl mx-auto w-full">
         {/* Header */}
-        <div className="bg-mau-primary shadow-sm border-b border-mau-secondary/20">
+        <div className="bg-mau-primary shadow-sm border-b border-mau-secondary/20 sticky top-0 z-10">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 p-4">
               <div className="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center p-2">

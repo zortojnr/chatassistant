@@ -1,6 +1,8 @@
 import { UserData } from '../types/user';
 import { KNOWLEDGE_BASE } from '../data/knowledgeBase';
 
+import { mauKnowledgeBase, searchKnowledgeBase } from '../lib/mauKnowledgeBase';
+
 interface ChatResponse {
   content: string;
   intent: string;
@@ -99,21 +101,7 @@ Your CGPA is calculated based on the total grade points earned divided by total 
       }
       
       if (message.toLowerCase().includes('registration') || message.toLowerCase().includes('register')) {
-        return `Course registration at MAU is done through the Student Portal during designated periods. Here's what you need to know:
-
-Requirements:
-• Clear all outstanding fees
-• Meet academic requirements for your level  
-• Get advisor approval
-
-Process:
-1. Log into the Student Portal
-2. Navigate to Course Registration
-3. Select courses for the semester
-4. Submit for advisor approval
-5. Print registration slip
-
-Registration periods are announced on the university website and Student Portal.`;
+        return `Course registration at MAU is a straightforward process designed to help you plan your academic journey effectively. Here's how it works: First, log into the Student Portal using your credentials. Next, ensure you've paid all required fees for the semester as this is necessary to access course selection. Then, carefully select your courses based on your current level and faculty requirements - this is important for staying on track with your degree program. After selecting courses, print your course registration form from the portal. Finally, submit this form to your faculty office for approval and keep a copy for your records. Registration typically opens two weeks before each semester begins, so it's beneficial to register early to secure your preferred courses and avoid any late registration penalties. This system ensures you have the courses needed for timely graduation while maintaining academic standards.`;
       }
       
       if (message.toLowerCase().includes('result') || message.toLowerCase().includes('transcript')) {

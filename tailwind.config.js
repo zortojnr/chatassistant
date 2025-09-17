@@ -4,9 +4,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        'mau-primary': '#0066cc',
-        'mau-secondary': '#004499',
-        'mau-accent': '#0080ff',
+        'mau-primary': '#D07348',
+        'mau-secondary': '#B85A32',
+        'mau-accent': '#E68B5C',
         'mau-light': '#e6f3ff',
         'mau-dark': '#003366',
         'mau-gold': '#ffd700',

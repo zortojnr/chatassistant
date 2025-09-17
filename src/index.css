@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --mau-primary: #D07348;
+  --mau-on-primary: #FFFFFF;
+}

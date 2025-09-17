@@ -1,10 +1,20 @@
-export const FACULTIES = [
-  'Faculty of Engineering',
-  'Faculty of Computing',
-  'Faculty of Physical Science',
-  'Faculty of Life Science',
-  'Faculty of Education',
+export const faculties = [
+  { id: 'computing', name: 'Computing' },
+  { id: 'agriculture', name: 'Agriculture' },
+  { id: 'education', name: 'Education' },
+  { id: 'engineering', name: 'Engineering' },
+  { id: 'life-sciences', name: 'Life Sciences' },
+  { id: 'physical-sciences', name: 'Physical Sciences' },
 ];
+
+export const departments = {
+  computing: ['Computer Science', 'Information Technology', 'Software Engineering'],
+  agriculture: ['Agricultural Economics', 'Animal Science', 'Crop Production', 'Soil Science'],
+  education: ['Educational Psychology', 'Curriculum Studies', 'Educational Administration'],
+  engineering: ['Civil Engineering', 'Electrical Engineering', 'Mechanical Engineering'],
+  'life-sciences': ['Biology', 'Botany', 'Zoology', 'Microbiology', 'Biochemistry'],
+  'physical-sciences': ['Physics', 'Mathematics', 'Statistics', 'Geology'],
+};
 
 export const ACADEMIC_LEVELS = [
   '100 Level',
