@@ -181,9 +181,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
           <Button
             onClick={() => setShowHistory(false)}
             variant="ghost"
-            size="sm"
+            className="bg-mau-primary text-white px-4 md:px-6 py-2 rounded-lg hover:bg-mau-secondary disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center min-w-[44px]"
           >
-            <X size={16} />
+            {isLoading ? (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
           </Button>
         </div>
       </div>
@@ -225,7 +229,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
         <div className="w-48 h-48">
           <img 
             src="/MAU.jpg" 
-            alt="MAU Logo Background" 
+            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-mau-primary focus:border-transparent text-sm md:text-base"
             className="w-full h-full object-contain"
           />
         </div>
@@ -234,7 +238,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
       {/* Main Chat Container */}
       <div className="flex-1 flex flex-col relative z-10 max-w-4xl mx-auto w-full">
         {/* Header */}
-        <div className="bg-mau-primary shadow-sm border-b border-mau-secondary/20 sticky top-0 z-10">
+        <div className="bg-mau-primary shadow-sm border-b border-mau-secondary/20">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 p-4">
               <div className="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center p-2">
