@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 interface PreLoginAnimationProps {
-  onComplete: () => void;
+  onComplete?: () => void;
 }
 
 const PreLoginAnimation: React.FC<PreLoginAnimationProps> = ({ onComplete }) => {
@@ -28,7 +28,7 @@ const PreLoginAnimation: React.FC<PreLoginAnimationProps> = ({ onComplete }) => 
           } else {
             // All words complete, wait then finish
             setTimeout(() => {
-              onComplete();
+              onComplete?.();
             }, 500);
           }
         }, 300);
@@ -38,7 +38,7 @@ const PreLoginAnimation: React.FC<PreLoginAnimationProps> = ({ onComplete }) => 
   }, [currentWordIndex, currentLetterIndex, currentWord.length, onComplete]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-mau-primary via-mau-secondary to-mau-dark flex items-center justify-center">
+    <div className="fixed inset-0 bg-gradient-to-br from-mau-primary via-mau-secondary to-mau-dark flex items-center justify-center z-[-1]">
       <div className="text-center">
         {/* University Logo */}
         <motion.div

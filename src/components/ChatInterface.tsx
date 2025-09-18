@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Send, LogOut, Loader2, Menu, X, Plus, MessageSquare, History } from 'lucide-react';
+import { Send, LogOut, Loader2, Menu, X, Plus, History } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import ChatBubble from './ChatBubble';
@@ -183,11 +183,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
             variant="ghost"
             className="bg-mau-primary text-white px-4 md:px-6 py-2 rounded-lg hover:bg-mau-secondary disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center min-w-[44px]"
           >
-            {isLoading ? (
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            ) : (
-              <Send className="w-4 h-4" />
-            )}
+            <Send className="w-4 h-4" />
           </Button>
         </div>
       </div>
@@ -227,9 +223,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
       {/* Fixed Background Logo */}
       <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-0 opacity-5">
         <div className="w-48 h-48">
-          <img 
-            src="/MAU.jpg" 
-            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-mau-primary focus:border-transparent text-sm md:text-base"
+          <img
+            src="/MAU.jpg"
+            alt="MAU Logo"
             className="w-full h-full object-contain"
           />
         </div>
@@ -248,11 +244,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
                   className="w-full h-full object-contain rounded-full"
                 />
               </div>
-              <div>
-                <h1 className="text-lg font-semibold text-white">
+              <div className="flex flex-col justify-center">
+                <h1 className="text-lg font-semibold text-white leading-tight">
                   MAU Assistant
                 </h1>
-                <p className="text-sm text-blue-200">
+                <p className="text-xs md:text-sm text-blue-200 leading-snug">
                   Demo: CSC/20U/1234, ENG/21U/5678, PHY/22U/9012, BIO/20U/3456, EDU/19U/7890 + password "password"
                 </p>
               </div>
@@ -284,7 +280,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 variant="ghost"
                 size="sm"
-                className="flex items-center gap-2 text-white hover:bg-mau-secondary"
+                className="hidden md:flex items-center gap-2 text-white hover:bg-mau-secondary"
               >
                 <Menu size={16} />
                 Quick Help
