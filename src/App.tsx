@@ -1,4 +1,3 @@
-import React from 'react';
 import { useState } from 'react';
 import PreLoginAnimation from './components/PreLoginAnimation';
 import LoginScreen from './components/LoginScreen';
@@ -11,7 +10,6 @@ import { AuthUser } from './types/user';
 function App() {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [admin, setAdmin] = useState<any>(null);
-  const [showPreLogin, setShowPreLogin] = useState(true);
   const [showSignUp, setShowSignUp] = useState(false);
   const [showAdminLogin, setShowAdminLogin] = useState(false);
 
@@ -30,61 +28,40 @@ function App() {
   const handleLogout = () => {
     setUser(null);
     setAdmin(null);
-    setShowPreLogin(true);
     setShowSignUp(false);
     setShowAdminLogin(false);
   };
 
   const handleBackToLogin = () => {
-    setShowPreLogin(true);
     setShowSignUp(false);
     setShowAdminLogin(false);
   };
 
-  if (showPreLogin) {
-    return (
-      <PreLoginAnimation 
-        onComplete={() => setShowPreLogin(false)} 
-      />
-    );
-  }
-
-  if (showAdminLogin) {
-    return (
-      <AdminLogin 
-        onLogin={handleAdminLogin}
-        onBack={handleBackToLogin}
-      />
-    );
-  }
-
-  if (showSignUp) {
-    return (
-      <SignUpScreen 
-        onBack={handleBackToLogin}
-        onSignUp={handleSignUp}
-      />
-    );
-  }
-
-  if (admin) {
-    return (
-      <AdminDashboard onLogout={handleLogout} />
-    );
-  }
-
-  if (!user) {
-    return (
-      <LoginScreen 
-        onLogin={handleLogin} 
-        onSignUp={() => setShowSignUp(true)}
-        onAdminLogin={() => setShowAdminLogin(true)}
-      />
-    );
-  }
-
   return (
-    <ChatInterface userData={user} onLogout={handleLogout} />
+    <>
+      <PreLoginAnimation />
+      {showAdminLogin ? (
+        <AdminLogin 
+          onLogin={handleAdminLogin}
+          onBack={handleBackToLogin}
+        />
+      ) : showSignUp ? (
+        <SignUpScreen 
+          onBack={handleBackToLogin}
+          onSignUp={handleSignUp}
+        />
+      ) : admin ? (
+        <AdminDashboard onLogout={handleLogout} />
+      ) : !user ? (
+        <LoginScreen 
+          onLogin={handleLogin} 
+          onSignUp={() => setShowSignUp(true)}
+          onAdminLogin={() => setShowAdminLogin(true)}
+        />
+      ) : (
+        <ChatInterface userData={user} onLogout={handleLogout} />
+      )}
+    </>
   );
 }
 
