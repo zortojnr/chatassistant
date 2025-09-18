@@ -1,6 +1,7 @@
 import { supabase } from './supabase';
 import { UserData } from '../types/user';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 // Mock data for development when Supabase is not available
 const MOCK_STUDENTS = [
   {
@@ -8,7 +9,7 @@ const MOCK_STUDENTS = [
     student_id: 'CSC/20U/1234',
     email: 'student@mau.edu.ng',
     first_name: 'John',
-    last_name: 'Doe',
+    last_name: 'Atsale',
     faculty: 'Faculty of Computing',
     level: '300 Level',
     year: '2024',
@@ -21,7 +22,7 @@ const MOCK_STUDENTS = [
     student_id: 'ENG/21U/5678',
     email: 'jane@mau.edu.ng',
     first_name: 'Jane',
-    last_name: 'Smith',
+    last_name: 'Okoro',
     faculty: 'Faculty of Engineering',
     level: '200 Level',
     year: '2024',
@@ -251,13 +252,26 @@ export async function registerStudent(userData: any): Promise<AuthUser | null> {
 
 export async function loginAdmin(username: string, password: string): Promise<any> {
   try {
+    console.time('loginAdmin Supabase query time');
     // Try Supabase first, fallback to mock data
     try {
-      const { data, error } = await supabase
+      // Supabase client does not support AbortController natively, so implement manual timeout
+      let timeoutId: NodeJS.Timeout | undefined;
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        timeoutId = setTimeout(() => reject(new Error('Request timed out')), 3000);
+      });
+
+      const supabasePromise = supabase
         .from('admin_users')
         .select('*')
         .eq('username', username)
         .single();
+
+      const result = await Promise.race([supabasePromise, timeoutPromise]);
+      if (timeoutId) clearTimeout(timeoutId);
+      console.timeEnd('loginAdmin Supabase query time');
+
+      const { data, error } = result as { data: any; error: any };
 
       if (!error && data) {
         // For now, use simple password check
@@ -272,7 +286,7 @@ export async function loginAdmin(username: string, password: string): Promise<an
         };
       }
     } catch (supabaseError) {
-      console.log('Supabase not available, using mock admin');
+      console.log('Supabase not available or request timed out, using mock admin');
     }
 
     // Fallback to mock admin
