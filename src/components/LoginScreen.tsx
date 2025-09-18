@@ -45,8 +45,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted with data:', formData);
-    
     const newErrors: Record<string, string> = {};
 
     if (!formData.studentId) {
@@ -68,14 +66,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
     }
 
     setErrors(newErrors);
-    console.log('Validation errors:', newErrors);
 
     if (Object.keys(newErrors).length === 0) {
       setIsLoading(true);
-      console.log('Attempting login...');
       try {
         const userData = await loginStudent(formData.studentId, formData.password);
-        console.log('Login result:', userData);
         if (userData) {
           onLogin(userData);
         } else {
@@ -177,6 +172,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
                   </div>
                 )}
 
+                {/* Student ID */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Student ID
@@ -194,6 +190,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
                   )}
                 </div>
 
+                {/* Password */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Password
@@ -220,18 +217,22 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
                   )}
                 </div>
 
+                {/* Faculty Select */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Faculty
                   </label>
-                  <Select onValueChange={(value) => handleInputChange('faculty', value)}>
+                  <Select 
+                    value={formData.faculty}
+                    onValueChange={(value) => handleInputChange('faculty', value)}
+                  >
                     <SelectTrigger className={errors.faculty ? 'border-red-500' : ''}>
                       <SelectValue placeholder="Select your faculty" />
                     </SelectTrigger>
                     <SelectContent>
                       {FACULTIES.map((faculty) => (
-                        <SelectItem key={faculty} value={faculty}>
-                          {faculty}
+                        <SelectItem key={faculty.id} value={faculty.id}>
+                          {faculty.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -241,11 +242,15 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
                   )}
                 </div>
 
+                {/* Academic Level Select */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Academic Level
                   </label>
-                  <Select onValueChange={(value) => handleInputChange('level', value)}>
+                  <Select 
+                    value={formData.level}
+                    onValueChange={(value) => handleInputChange('level', value)}
+                  >
                     <SelectTrigger className={errors.level ? 'border-red-500' : ''}>
                       <SelectValue placeholder="Select your level" />
                     </SelectTrigger>
@@ -262,6 +267,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
                   )}
                 </div>
 
+                {/* Submit */}
                 <Button 
                   type="submit" 
                   className="w-full bg-mau-primary hover:bg-mau-secondary text-white py-2 rounded-md transition-colors mb-4"
@@ -270,6 +276,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
                   {isLoading ? 'Signing In...' : 'Access MAU Assistant'}
                 </Button>
 
+                {/* Sign Up */}
                 <div className="text-center">
                   <p className="text-sm text-gray-600 mb-3">
                     Don't have a student ID yet?
@@ -285,6 +292,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
                   </Button>
                 </div>
 
+                {/* Admin Login */}
                 <div className="pt-4 border-t border-gray-200">
                   <Button
                     type="button"
@@ -298,6 +306,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
                 </div>
               </form>
 
+              {/* Hint */}
               <div className="mt-4 p-3 bg-mau-light rounded-md">
                 <p className="text-xs text-gray-600 text-center">
                   Use any valid Student ID format (e.g., CSC/20U/1234, ENG/21U/5678, PHY/22U/9012) + password "password"
