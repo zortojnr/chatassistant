@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Send, LogOut, Loader2, Menu, X, Plus, History } from 'lucide-react';
+import { Send, LogOut, Loader2, Menu, X, Plus, History, Minimize2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import ChatBubble from './ChatBubble';
@@ -27,6 +27,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -103,6 +104,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
     // Save user message
     if (currentSessionId) {
       await saveChatMessage(currentSessionId, userMessage);
+      
+      // Update session title if it's the first user message
+      if (messages.length === 1) {
+        const title = inputMessage.length > 30 
+          ? inputMessage.substring(0, 30) + '...' 
+          : inputMessage;
+        updateChatSession(currentSessionId, title);
+      }
     }
     
     setInputMessage('');
@@ -135,14 +144,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
         // Save bot message
         if (currentSessionId) {
           saveChatMessage(currentSessionId, botMessage);
-          
-          // Update session title if it's the first user message
-          if (messages.length === 1) {
-            const title = inputMessage.length > 30 
-              ? inputMessage.substring(0, 30) + '...' 
-              : inputMessage;
-            updateChatSession(currentSessionId, title);
-          }
         }
         
         setIsTyping(false);
@@ -218,32 +219,27 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
     </div>
   );
 
+  if (isMinimized) {
+    return (
+      <div className="fixed bottom-4 right-4 z-50">
+        <Button
+          onClick={() => setIsMinimized(false)}
+          className="bg-mau-primary hover:bg-mau-secondary text-white rounded-full w-16 h-16 shadow-lg flex items-center justify-center"
+        >
+          <Menu size={24} />
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="h-screen flex bg-mau-gray relative overflow-hidden">
-      {/* Fixed Background Logo */}
-      <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-0 opacity-5">
-        <div className="w-48 h-48">
-          <img
-            src="/MAU.jpg"
-            alt="MAU Logo"
-            className="w-full h-full object-contain"
-          />
-        </div>
-      </div>
-
       {/* Main Chat Container */}
       <div className="flex-1 flex flex-col relative z-10 max-w-4xl mx-auto w-full">
         {/* Header */}
         <div className="bg-mau-primary shadow-sm border-b border-mau-secondary/20">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 p-4">
-              <div className="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center p-2">
-                <img 
-                  src="/MAU.jpg" 
-                  alt="MAU Logo" 
-                  className="w-full h-full object-contain rounded-full"
-                />
-              </div>
               <div className="flex flex-col justify-center">
                 <h1 className="text-lg font-semibold text-white leading-tight">
                   MAU Assistant
@@ -254,6 +250,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
               </div>
             </div>
             <div className="flex items-center gap-2 p-4">
+              {/* Minimize Button */}
+              <Button
+                onClick={() => setIsMinimized(true)}
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-mau-secondary"
+              >
+                <Minimize2 size={16} />
+              </Button>
+              
               {/* Chat History Button */}
               <Button
                 onClick={() => setShowHistory(!showHistory)}
@@ -283,7 +289,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
                 className="hidden md:flex items-center gap-2 text-white hover:bg-mau-secondary"
               >
                 <Menu size={16} />
-                Quick Help
+                Quick Ask a Question
               </Button>
               
               <Button

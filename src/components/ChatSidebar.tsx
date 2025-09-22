@@ -84,7 +84,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ onQuickReply, isOpen, onToggl
       >
         <div className="h-full flex flex-col">
           <div className="p-4 border-b border-gray-200 bg-mau-light">
-            <h2 className="text-lg font-semibold text-gray-800">Quick Help</h2>
+            <h2 className="text-lg font-semibold text-gray-800">Quick Ask a Question</h2>
             <p className="text-sm text-gray-600">Find answers instantly</p>
           </div>
 
@@ -142,13 +142,6 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ onQuickReply, isOpen, onToggl
 
           <div className="p-4 border-t border-gray-200 bg-mau-light/30">
             <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-2 bg-white rounded-full shadow-sm flex items-center justify-center p-2">
-                <img 
-                  src="/MAU.jpg" 
-                  alt="MAU Logo" 
-                  className="w-full h-full object-contain"
-                />
-              </div>
               <p className="text-xs text-gray-600">
                 MAU Assistant • Available 24/7
               </p>

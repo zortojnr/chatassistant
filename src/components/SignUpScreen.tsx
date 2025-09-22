@@ -21,13 +21,12 @@ const STUDENT_TYPES = [
 ];
 
 const FACULTIES = [
-  'Faculty of Agriculture',
-  'Faculty of Arts',
-  'Faculty of Education',
-  'Faculty of Engineering',
-  'Faculty of Law',
-  'Faculty of Management Sciences',
-  'Faculty of Science'
+  'Agriculture',
+  'Computing', 
+  'Engineering',
+  'Life Sciences',
+  'Education',
+  'Physical Sciences'
 ];
 
 const ACADEMIC_LEVELS = [
@@ -67,19 +66,26 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onBack, onSignUp }) => {
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Invalid email format';
     if (!formData.phoneNumber.trim()) newErrors.phoneNumber = 'Phone number is required';
     if (!formData.studentType) newErrors.studentType = 'Please select student type';
-    if (!formData.faculty) newErrors.faculty = 'Please select your faculty';
     if (!formData.level) newErrors.level = 'Please select your academic level';
 
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      // Generate temporary student ID for new users
-      const tempId = `TEMP/${new Date().getFullYear().toString().slice(-2)}/${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
-      onSignUp({
-        ...formData,
-        studentId: tempId,
-        isNewUser: true
-      });
+      try {
+        // Generate temporary student ID for new users
+        const tempId = `TEMP/${new Date().getFullYear().toString().slice(-2)}U/${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
+        
+        const userData = {
+          ...formData,
+          studentId: tempId,
+          isNewUser: true
+        };
+        
+        // Call the signup function which should handle registration
+        onSignUp(userData);
+      } catch (error) {
+        setErrors({ general: 'Registration failed. Please try again.' });
+      }
     }
   };
 
@@ -208,10 +214,10 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onBack, onSignUp }) => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Student Type *
+                    Faculty (Optional)
                   </label>
                   <Select onValueChange={(value) => handleInputChange('studentType', value)}>
-                    <SelectTrigger className={errors.studentType ? 'border-red-500' : ''}>
+                    <SelectTrigger>
                       <SelectValue placeholder="Select your student type" />
                     </SelectTrigger>
                     <SelectContent>
@@ -222,9 +228,6 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onBack, onSignUp }) => {
                       ))}
                     </SelectContent>
                   </Select>
-                  {errors.studentType && (
-                    <p className="text-red-500 text-xs mt-1">{errors.studentType}</p>
-                  )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

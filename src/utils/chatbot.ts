@@ -1,7 +1,6 @@
 import { UserData } from '../types/user';
 import { KNOWLEDGE_BASE } from '../data/knowledgeBase';
-
-import { mauKnowledgeBase, searchKnowledgeBase } from '../lib/mauKnowledgeBase';
+import { mauStudentKnowledgeBase, searchMauKnowledgeBase } from '../data/mauKnowledgeBase';
 
 interface ChatResponse {
   content: string;
@@ -82,26 +81,23 @@ function extractEntities(message: string): Record<string, string[]> {
 function generateResponse(intent: string, message: string, userData: UserData): string {
   const entities = extractEntities(message);
   
+  // First try to get response from the comprehensive knowledge base
+  const kbResponse = searchMauKnowledgeBase(message);
+  if (kbResponse && !kbResponse.includes('What specific information would you like to know')) {
+    return kbResponse;
+  }
+  
   switch (intent) {
     case 'greeting':
       return `Hello! I'm your MAU Assistant. I can help you with academic information, course registration, fee payments, campus services, and more. What would you like to know?`;
     
     case 'academic':
       if (message.toLowerCase().includes('grading') || message.toLowerCase().includes('grade')) {
-        return `MAU uses a 5-point grading system:
-
-A: 5.0 points (70-100%)
-B: 4.0 points (60-69%)  
-C: 3.0 points (50-59%)
-D: 2.0 points (45-49%)
-E: 1.0 points (40-44%)
-F: 0.0 points (0-39%)
-
-Your CGPA is calculated based on the total grade points earned divided by total credit units attempted.`;
+        return searchMauKnowledgeBase('grading system');
       }
       
       if (message.toLowerCase().includes('registration') || message.toLowerCase().includes('register')) {
-        return `Course registration at MAU is a straightforward process designed to help you plan your academic journey effectively. Here's how it works: First, log into the Student Portal using your credentials. Next, ensure you've paid all required fees for the semester as this is necessary to access course selection. Then, carefully select your courses based on your current level and faculty requirements - this is important for staying on track with your degree program. After selecting courses, print your course registration form from the portal. Finally, submit this form to your faculty office for approval and keep a copy for your records. Registration typically opens two weeks before each semester begins, so it's beneficial to register early to secure your preferred courses and avoid any late registration penalties. This system ensures you have the courses needed for timely graduation while maintaining academic standards.`;
+        return searchMauKnowledgeBase('course registration');
       }
       
       if (message.toLowerCase().includes('result') || message.toLowerCase().includes('transcript')) {
@@ -111,14 +107,15 @@ Check Results:
 • Log into the Student Portal with your student ID
 • Navigate to Academic Records
 • View semester results and CGPA
+• Results published 4-6 weeks after exams
 
 Get Transcript:
-• Visit the Academic Office
+• Visit the Registry Office
 • Submit transcript application form
 • Provide payment receipt and valid ID
 • Processing takes 3-5 working days
 
-Need help with your Student Portal login? Contact ICT Support.`;
+Need help with your Student Portal login? Contact ICT Support at ict@mau.edu.ng`;
       }
       
       return `I can help you with academic matters including:
@@ -131,167 +128,51 @@ Need help with your Student Portal login? Contact ICT Support.`;
 What specific academic information do you need?`;
     
     case 'payment':
-      return `MAU offers several payment methods for school fees:
-
-Payment Options:
-• Online payment via Student Portal
-• Bank transfer to university account
-• POS payment at designated campus centers
-
-Bank Details:
-Contact the Bursary Department for current bank account details.
-
-Important Notes:
-• Payment deadlines are announced each semester
-• Late payments may incur penalty fees
-• Keep payment receipts for your records
-• Installment options may be available (contact Bursary)
-
-Need help with online payment? Contact ICT Support at the Help Desk.`;
+      return searchMauKnowledgeBase('fees payment');
     
     case 'registration':
-      return `Course registration information for ${userData.level} students:
-
-Registration Periods:
-• Announced on university website and Student Portal
-• Usually at the beginning of each semester
-• Late registration available with penalty fees
-
-Requirements:
-• All fees must be paid
-• Academic standing requirements met
-• Advisor approval required
-
-Add/Drop Period:
-• First 2 weeks of semester
-• Use Student Portal or visit Academic Office
-• May require additional approvals
-
-Need Help?
-Contact your Faculty Academic Office or visit the main Academic Office for assistance.`;
+      return searchMauKnowledgeBase('course registration');
     
     case 'campus':
       if (message.toLowerCase().includes('location') || message.toLowerCase().includes('address')) {
-        return `MAU Campus Location:
-Modibbo Adama University
-PMB 2076, Yola
-Adamawa State, Nigeria
-
-• Established: 1981 (Renamed in 2021)
-• Motto: "Knowledge and Humanism"
-
-The campus is easily accessible by public transport and private vehicles. Parking facilities are available on campus.`;
+        return searchMauKnowledgeBase('campus location');
       }
       
       if (message.toLowerCase().includes('library')) {
-        return `MAU Library Services:
-
-Operating Hours:
-• Monday-Friday: 8:00 AM - 10:00 PM
-• Saturday: 9:00 AM - 6:00 PM
-• Closed on Sundays and public holidays
-
-Services Available:
-• Study spaces and reading rooms
-• Computer lab with internet access
-• Research assistance
-• Digital resources and databases
-• Printing and photocopying
-
-Resources:
-• Academic books and journals
-• Past questions and project materials
-• Online databases and e-books
-
-Visit the library for quiet study spaces and research support!`;
+        return searchMauKnowledgeBase('library');
       }
       
       if (message.toLowerCase().includes('hostel') || message.toLowerCase().includes('accommodation')) {
-        return `MAU Accommodation:
-
-Application Process:
-• Apply through Student Affairs Office
-• Submit required documents
-• Pay accommodation fees
-• Allocation based on availability
-
-Requirements:
-• Completed accommodation form
-• Passport photographs
-• Admission letter (for new students)
-• Payment receipt
-
-Facilities:
-• Male and female hostels available
-• Basic furnishing provided
-• Common areas and study spaces
-
-Contact: Student Affairs Office for current availability and rates.`;
+        return searchMauKnowledgeBase('accommodation hostel');
       }
       
-      return `I can provide information about MAU campus including:
-• Campus location and directions
-• Library services and hours
-• Hostel accommodation
-• Campus facilities and buildings
-• Transportation and parking
-
-What specific campus information do you need?`;
+      return searchMauKnowledgeBase('campus facilities');
     
     case 'contact':
-      return `MAU Contact Information:
-
-Emergency Contacts:
-• Security: Campus Security Office
-• Medical: University Health Center
-• Fire Emergency: Contact Security immediately
-
-Academic Support:
-• Faculty Academic Office
-• Head of Department
-• Academic Advisor
-• Main Academic Office
-
-ICT Support:
-• ICT Help Desk
-• Hours: Monday-Friday, 8:00 AM - 5:00 PM
-• Services: Student Portal, email setup, WiFi assistance
-
-Administrative Offices:
-• Bursary Department (fees and payments)
-• Student Affairs (accommodation, student life)
-• Registry (transcripts, certificates)
-
-Need a specific department contact? Let me know what you're looking for!`;
+      return searchMauKnowledgeBase('contact information');
     
     case 'leadership':
-      return `MAU Leadership:
+      return `MAU Leadership Structure:
 
-Vice-Chancellor:
-Prof. Ibrahim Umar
+Vice-Chancellor: Prof. Ibrahim Umar
 
 Deputy Vice-Chancellors:
 • Deputy VC (Academic)
 • Deputy VC (Administration)
 
-Administrative Structure:
+Key Administrative Officers:
 • Registrar
-• Bursar
+• Bursar  
 • Librarian
-• Various Deans of Faculties
+• Dean of Student Affairs
+• Various Faculty Deans
 
-Each faculty has its own Dean and administrative structure. The university leadership is committed to academic excellence and student welfare.`;
+Each faculty has its own Dean and administrative structure. The university leadership is committed to academic excellence and student welfare.
+
+For specific leadership contacts, visit the university website at https://mau.edu.ng`;
     
     default:
-      return `I'm here to help you with information about MAU! I can assist with:
-
-• Academic: Course registration, grading, results, transcripts
-• Payments: Fee payment methods and procedures
-• Campus: Location, facilities, library, accommodation
-• Contacts: Department contacts and emergency information
-• Student Life: Clubs, activities, and campus services
-
-What would you like to know more about?`;
+      return searchMauKnowledgeBase('general information');
   }
 }
 

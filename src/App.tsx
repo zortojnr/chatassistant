@@ -18,7 +18,21 @@ function App() {
   };
 
   const handleSignUp = (userData: any) => {
-    setUser(userData);
+    // Create a proper AuthUser object from signup data
+    const authUser = {
+      id: Date.now().toString(),
+      studentId: userData.studentId,
+      email: userData.email,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      faculty: userData.faculty || 'Computing',
+      level: userData.level,
+      year: userData.year,
+      phoneNumber: userData.phoneNumber,
+      studentType: userData.studentType,
+      department: userData.department
+    };
+    setUser(authUser);
   };
 
   const handleAdminLogin = (adminData: any) => {
