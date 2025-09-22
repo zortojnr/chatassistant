@@ -1,5 +1,5 @@
 import { UserData } from '../types/user';
-import { mauStudentKnowledgeBase, searchMauKnowledgeBase } from '../data/mauKnowledgeBase';
+import { searchMauKnowledgeBase } from '../data/mauKnowledgeBase';
 
 interface ChatResponse {
   content: string;
@@ -7,182 +7,72 @@ interface ChatResponse {
   confidence: number;
 }
 
-// Intent classification patterns
-const INTENT_PATTERNS = {
-  greeting: [
-    /^(hi|hello|hey|good morning|good afternoon|good evening)/i,
-    /^(how are you|what's up|sup)/i
-  ],
-  academic: [
-    /\b(course|registration|register|grade|grading|result|transcript|cgpa|gpa)\b/i,
-    /\b(exam|examination|test|assignment|semester|academic)\b/i,
-    /\b(class|lecture|timetable|schedule)\b/i
-  ],
-  payment: [
-    /\b(fee|fees|payment|pay|money|cost|price|tuition)\b/i,
-    /\b(bank|transfer|online payment|pos)\b/i,
-    /\b(receipt|installment|deadline)\b/i
-  ],
-  registration: [
-    /\b(register|registration|enroll|enrollment|course registration)\b/i,
-    /\b(add course|drop course|withdraw)\b/i,
-    /\b(late registration|registration period)\b/i
-  ],
-  campus: [
-    /\b(campus|location|address|hostel|accommodation|library)\b/i,
-    /\b(facility|facilities|building|office|department)\b/i,
-    /\b(transport|parking|security)\b/i
-  ],
-  contact: [
-    /\b(contact|phone|email|office|help|support)\b/i,
-    /\b(emergency|urgent|assistance)\b/i
-  ],
-  leadership: [
-    /\b(vice chancellor|vc|deputy|management|leadership)\b/i,
-    /\b(administration|staff|faculty head)\b/i
-  ]
-};
-
-// Entity extraction patterns
-const ENTITY_PATTERNS = {
-  courseCode: /\b[A-Z]{3}\s?\d{3}\b/g,
-  level: /\b\d{3}\s?level\b/gi,
-  faculty: /\bfaculty\s+of\s+\w+/gi
-};
-
+// Simplified intent classification
 function classifyIntent(message: string): { intent: string; confidence: number } {
-  const normalizedMessage = message.toLowerCase().trim();
+  const lowerQuery = message.toLowerCase();
   
-  for (const [intent, patterns] of Object.entries(INTENT_PATTERNS)) {
-    for (const pattern of patterns) {
-      if (pattern.test(normalizedMessage)) {
-        return { intent, confidence: 0.8 };
-      }
-    }
+  // Check for specific keywords to determine intent
+  if (lowerQuery.includes('admission') || lowerQuery.includes('jamb') || lowerQuery.includes('requirements')) {
+    return { intent: 'admissions', confidence: 0.9 };
   }
   
-  return { intent: 'general', confidence: 0.5 };
-}
-
-function extractEntities(message: string): Record<string, string[]> {
-  const entities: Record<string, string[]> = {};
-  
-  for (const [entityType, pattern] of Object.entries(ENTITY_PATTERNS)) {
-    const matches = message.match(pattern);
-    if (matches) {
-      entities[entityType] = matches;
-    }
+  if (lowerQuery.includes('fee') || lowerQuery.includes('payment') || lowerQuery.includes('pay') || lowerQuery.includes('rrr')) {
+    return { intent: 'fees', confidence: 0.9 };
   }
   
-  return entities;
+  if (lowerQuery.includes('hostel') || lowerQuery.includes('accommodation')) {
+    return { intent: 'hostel', confidence: 0.9 };
+  }
+  
+  if (lowerQuery.includes('course') || lowerQuery.includes('registration') || lowerQuery.includes('grade') || lowerQuery.includes('result')) {
+    return { intent: 'academic', confidence: 0.9 };
+  }
+  
+  if (lowerQuery.includes('contact') || lowerQuery.includes('phone') || lowerQuery.includes('email')) {
+    return { intent: 'contacts', confidence: 0.9 };
+  }
+  
+  if (lowerQuery.includes('location') || lowerQuery.includes('library') || lowerQuery.includes('campus')) {
+    return { intent: 'campus', confidence: 0.9 };
+  }
+  
+  if (lowerQuery.includes('hello') || lowerQuery.includes('hi') || lowerQuery.includes('hey')) {
+    return { intent: 'greeting', confidence: 0.9 };
+  }
+  
+  return { intent: 'general', confidence: 0.7 };
 }
 
 function generateResponse(intent: string, message: string, userData: UserData): string {
-  
-  // First try to get response from the comprehensive knowledge base
+  // Always try the knowledge base first
   const kbResponse = searchMauKnowledgeBase(message);
+  
+  // If knowledge base has a specific answer, use it
   if (kbResponse && !kbResponse.includes('What specific information would you like to know about MAU?')) {
     return kbResponse;
   }
   
-  switch (intent) {
-    case 'greeting':
-      return `Hello! I'm your MAU Assistant. 👋
+  // Handle greetings specially
+  if (intent === 'greeting') {
+    return `Hello! I'm your MAU Assistant. 👋
 
 I can help you with:
 • **Admissions** - Requirements, status check, documents
-• **Fees & Payment** - School fees, RRR generation, receipts
+• **Fees & Payment** - School fees, RRR generation, receipts  
 • **Accommodation** - Hostel application, fees, allocation
 • **Academic** - Course registration, grading, results
 • **Campus Life** - Facilities, contacts, student services
 
 What would you like to know about MAU?`;
-    
-    case 'academic':
-      if (message.toLowerCase().includes('grading') || message.toLowerCase().includes('grade')) {
-        return searchMauKnowledgeBase('grading system');
-      }
-      
-      if (message.toLowerCase().includes('registration') || message.toLowerCase().includes('register')) {
-        return searchMauKnowledgeBase('course registration');
-      }
-      
-      if (message.toLowerCase().includes('result') || message.toLowerCase().includes('transcript')) {
-        return `To access your academic records:
-
-Check Results:
-• Log into the Student Portal with your student ID
-• Navigate to Academic Records
-• View semester results and CGPA
-• Results published 4-6 weeks after exams
-
-Get Transcript:
-• Visit the Registry Office
-• Submit transcript application form
-• Provide payment receipt and valid ID
-• Processing takes 3-5 working days
-
-Need help with your Student Portal login? Contact ICT Support at ict@mau.edu.ng`;
-      }
-      
-      return `I can help you with academic matters including:
-• **Course registration** and add/drop procedures
-• **Grading system** and CGPA calculation
-• **Result checking** and transcript requests
-• **Academic calendar** and important dates
-• **Examination procedures**
-
-What specific academic information do you need?`;
-    
-    case 'payment':
-      return searchMauKnowledgeBase('fees payment');
-    
-    case 'registration':
-      return searchMauKnowledgeBase('course registration');
-    
-    case 'campus':
-      if (message.toLowerCase().includes('location') || message.toLowerCase().includes('address')) {
-        return searchMauKnowledgeBase('campus location');
-      }
-      
-      if (message.toLowerCase().includes('library')) {
-        return searchMauKnowledgeBase('library');
-      }
-      
-      if (message.toLowerCase().includes('hostel') || message.toLowerCase().includes('accommodation')) {
-        return searchMauKnowledgeBase('accommodation hostel');
-      }
-      
-      return searchMauKnowledgeBase('campus facilities');
-    
-    case 'contact':
-      return searchMauKnowledgeBase('contact information');
-    
-    case 'leadership':
-      return searchMauKnowledgeBase('vice chancellor leadership');
-    
-    default:
-      return `I'm here to help with any questions about MAU! 
-
-**Popular topics:**
-• How to pay school fees online
-• Admission requirements and status
-• Hostel accommodation process
-• Course registration procedures
-• Contact information and support
-
-**Quick Links:**
-• [MAU Website](https://mau.edu.ng)
-• [Student Portal](https://mau.edu.ng/portals)
-• [Admissions Portal](https://mautech.safapply.com/)
-
-What specific information can I help you find?`;
   }
+  
+  // For all other cases, return the knowledge base response
+  return kbResponse;
 }
 
 export async function processMessage(message: string, userData: UserData): Promise<ChatResponse> {
   // Simulate processing delay
-  await new Promise(resolve => setTimeout(resolve, 500));
+  await new Promise(resolve => setTimeout(resolve, 300));
   
   const { intent, confidence } = classifyIntent(message);
   const content = generateResponse(intent, message, userData);
