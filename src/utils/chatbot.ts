@@ -1,5 +1,4 @@
 import { UserData } from '../types/user';
-import { KNOWLEDGE_BASE } from '../data/knowledgeBase';
 import { mauStudentKnowledgeBase, searchMauKnowledgeBase } from '../data/mauKnowledgeBase';
 
 interface ChatResponse {
@@ -79,17 +78,25 @@ function extractEntities(message: string): Record<string, string[]> {
 }
 
 function generateResponse(intent: string, message: string, userData: UserData): string {
-  const entities = extractEntities(message);
   
   // First try to get response from the comprehensive knowledge base
   const kbResponse = searchMauKnowledgeBase(message);
-  if (kbResponse && !kbResponse.includes('What specific information would you like to know')) {
+  if (kbResponse && !kbResponse.includes('What specific information would you like to know about MAU?')) {
     return kbResponse;
   }
   
   switch (intent) {
     case 'greeting':
-      return `Hello! I'm your MAU Assistant. I can help you with academic information, course registration, fee payments, campus services, and more. What would you like to know?`;
+      return `Hello! I'm your MAU Assistant. 👋
+
+I can help you with:
+• **Admissions** - Requirements, status check, documents
+• **Fees & Payment** - School fees, RRR generation, receipts
+• **Accommodation** - Hostel application, fees, allocation
+• **Academic** - Course registration, grading, results
+• **Campus Life** - Facilities, contacts, student services
+
+What would you like to know about MAU?`;
     
     case 'academic':
       if (message.toLowerCase().includes('grading') || message.toLowerCase().includes('grade')) {
@@ -119,11 +126,11 @@ Need help with your Student Portal login? Contact ICT Support at ict@mau.edu.ng`
       }
       
       return `I can help you with academic matters including:
-• Course registration and add/drop procedures
-• Grading system and CGPA calculation
-• Result checking and transcript requests
-• Academic calendar and important dates
-• Examination procedures
+• **Course registration** and add/drop procedures
+• **Grading system** and CGPA calculation
+• **Result checking** and transcript requests
+• **Academic calendar** and important dates
+• **Examination procedures**
 
 What specific academic information do you need?`;
     
@@ -152,27 +159,24 @@ What specific academic information do you need?`;
       return searchMauKnowledgeBase('contact information');
     
     case 'leadership':
-      return `MAU Leadership Structure:
-
-Vice-Chancellor: Prof. Ibrahim Umar
-
-Deputy Vice-Chancellors:
-• Deputy VC (Academic)
-• Deputy VC (Administration)
-
-Key Administrative Officers:
-• Registrar
-• Bursar  
-• Librarian
-• Dean of Student Affairs
-• Various Faculty Deans
-
-Each faculty has its own Dean and administrative structure. The university leadership is committed to academic excellence and student welfare.
-
-For specific leadership contacts, visit the university website at https://mau.edu.ng`;
+      return searchMauKnowledgeBase('vice chancellor leadership');
     
     default:
-      return searchMauKnowledgeBase('general information');
+      return `I'm here to help with any questions about MAU! 
+
+**Popular topics:**
+• How to pay school fees online
+• Admission requirements and status
+• Hostel accommodation process
+• Course registration procedures
+• Contact information and support
+
+**Quick Links:**
+• [MAU Website](https://mau.edu.ng)
+• [Student Portal](https://mau.edu.ng/portals)
+• [Admissions Portal](https://mautech.safapply.com/)
+
+What specific information can I help you find?`;
   }
 }
 

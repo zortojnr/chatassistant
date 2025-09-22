@@ -54,6 +54,20 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ onQuickReply, isOpen, onToggl
   };
 
   const handleQuickReply = (answer: string) => {
+    // Instead of sending the answer directly, send the question to make it feel natural
+    const parentItem = QUICK_INFO.find(category => 
+      category.items.some(item => item.answer === answer)
+    );
+    
+    if (parentItem) {
+      const questionItem = parentItem.items.find(item => item.answer === answer);
+      if (questionItem) {
+        onQuickReply(questionItem.question);
+        return;
+      }
+    }
+    
+    // Fallback to the answer if question not found
     onQuickReply(answer);
   };
 

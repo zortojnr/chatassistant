@@ -162,15 +162,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
   };
 
   const handleQuickReply = (message: string) => {
-    const quickMessage: ChatMessage = {
-      id: Date.now().toString(),
-      content: message,
-      isUser: false,
-      timestamp: new Date(),
-      intent: 'quick_info'
-    };
-
-    setMessages(prev => [...prev, quickMessage]);
+    // Set the message in the input field and trigger send
+    setInputMessage(message);
+    
+    // Focus the input field
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 100);
+    
     setSidebarOpen(false); // Close sidebar after quick reply
   };
 
