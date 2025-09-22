@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { isUsingDemoCredentials } from './supabase';
 import { UserData } from '../types/user';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -93,8 +94,8 @@ export async function loginStudent(studentId: string, password: string): Promise
 
 export async function registerStudent(userData: any): Promise<AuthUser | null> {
   try {
-    // Try Supabase first, fallback to mock registration
-    try {
+    // Skip Supabase if using demo credentials
+    if (!isUsingDemoCredentials) {
       const { data, error } = await supabase
         .from('students')
         .insert({
@@ -128,8 +129,6 @@ export async function registerStudent(userData: any): Promise<AuthUser | null> {
           department: data.department,
         };
       }
-    } catch (supabaseError) {
-      console.log('Supabase not available, using mock registration');
     }
 
     // Fallback to mock registration
@@ -156,23 +155,13 @@ export async function registerStudent(userData: any): Promise<AuthUser | null> {
 
 export async function loginAdmin(username: string, password: string): Promise<any> {
   try {
-    // Try Supabase first, fallback to mock data
-    try {
-      // Create a timeout promise that rejects after 2 seconds
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Request timed out')), 2000);
-      });
-
-      // Create the Supabase query promise
-      const supabasePromise = supabase
+    // Skip Supabase if using demo credentials
+    if (!isUsingDemoCredentials) {
+      const { data, error } = await supabase
         .from('admin_users')
         .select('*')
         .eq('username', username)
         .single();
-
-      // Race between the query and timeout
-      const result = await Promise.race([supabasePromise, timeoutPromise]);
-      const { data, error } = result as { data: any; error: any };
 
       if (!error && data) {
         // For now, use simple password check
@@ -186,8 +175,6 @@ export async function loginAdmin(username: string, password: string): Promise<an
           role: data.role,
         };
       }
-    } catch (supabaseError) {
-      console.log('Supabase not available, using mock admin');
     }
 
     // Fallback to mock admin
@@ -227,23 +214,13 @@ export async function loginStudentWithTimeout(studentId: string, password: strin
       return null;
     }
 
-    // Try Supabase with timeout, fallback to mock data
-    try {
-      // Create a timeout promise that rejects after 2 seconds
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Request timed out')), 2000);
-      });
-
-      // Create the Supabase query promise
-      const supabasePromise = supabase
+    // Skip Supabase if using demo credentials
+    if (!isUsingDemoCredentials) {
+      const { data, error } = await supabase
         .from('students')
         .select('*')
         .eq('student_id', studentId)
         .single();
-
-      // Race between the query and timeout
-      const result = await Promise.race([supabasePromise, timeoutPromise]);
-      const { data, error } = result as { data: any; error: any };
 
       if (!error && data) {
         return {
@@ -260,8 +237,6 @@ export async function loginStudentWithTimeout(studentId: string, password: strin
           department: data.department,
         };
       }
-    } catch (supabaseError) {
-      console.log('Supabase not available, using mock data generation');
     }
 
     // Generate student data from ID format for any valid student ID

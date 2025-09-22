@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { isUsingDemoCredentials } from './supabase';
 import { ChatMessage } from '../types/user';
 
 export interface ChatSession {
@@ -10,7 +11,8 @@ export interface ChatSession {
 
 export async function createChatSession(studentId: string, title: string): Promise<string | null> {
   try {
-    try {
+    // Skip Supabase if using demo credentials
+    if (!isUsingDemoCredentials) {
       const { data, error } = await supabase
         .from('chat_sessions')
         .insert({
@@ -23,8 +25,6 @@ export async function createChatSession(studentId: string, title: string): Promi
       if (!error && data) {
         return data.id;
       }
-    } catch (supabaseError) {
-      console.log('Supabase not available, using mock session');
     }
 
     // Fallback to mock session ID
@@ -37,7 +37,8 @@ export async function createChatSession(studentId: string, title: string): Promi
 
 export async function getChatSessions(studentId: string): Promise<ChatSession[]> {
   try {
-    try {
+    // Skip Supabase if using demo credentials
+    if (!isUsingDemoCredentials) {
       const { data, error } = await supabase
         .from('chat_sessions')
         .select('*')
@@ -47,8 +48,6 @@ export async function getChatSessions(studentId: string): Promise<ChatSession[]>
       if (!error && data) {
         return data;
       }
-    } catch (supabaseError) {
-      console.log('Supabase not available, returning empty sessions');
     }
 
     // Fallback to empty array
@@ -61,7 +60,8 @@ export async function getChatSessions(studentId: string): Promise<ChatSession[]>
 
 export async function saveChatMessage(sessionId: string, message: ChatMessage): Promise<void> {
   try {
-    try {
+    // Skip Supabase if using demo credentials
+    if (!isUsingDemoCredentials) {
       const { error } = await supabase
         .from('chat_messages')
         .insert({
@@ -75,8 +75,6 @@ export async function saveChatMessage(sessionId: string, message: ChatMessage): 
       if (!error) {
         return;
       }
-    } catch (supabaseError) {
-      console.log('Supabase not available, message not saved');
     }
 
     // Fallback - do nothing (message not saved in development)
@@ -87,7 +85,8 @@ export async function saveChatMessage(sessionId: string, message: ChatMessage): 
 
 export async function getChatMessages(sessionId: string): Promise<ChatMessage[]> {
   try {
-    try {
+    // Skip Supabase if using demo credentials
+    if (!isUsingDemoCredentials) {
       const { data, error } = await supabase
         .from('chat_messages')
         .select('*')
@@ -104,8 +103,6 @@ export async function getChatMessages(sessionId: string): Promise<ChatMessage[]>
           confidence: msg.confidence,
         }));
       }
-    } catch (supabaseError) {
-      console.log('Supabase not available, returning empty messages');
     }
 
     // Fallback to empty array
@@ -118,7 +115,8 @@ export async function getChatMessages(sessionId: string): Promise<ChatMessage[]>
 
 export async function updateChatSession(sessionId: string, title: string): Promise<void> {
   try {
-    try {
+    // Skip Supabase if using demo credentials
+    if (!isUsingDemoCredentials) {
       const { error } = await supabase
         .from('chat_sessions')
         .update({ 
@@ -130,8 +128,6 @@ export async function updateChatSession(sessionId: string, title: string): Promi
       if (!error) {
         return;
       }
-    } catch (supabaseError) {
-      console.log('Supabase not available, session not updated');
     }
 
     // Fallback - do nothing (session not updated in development)
