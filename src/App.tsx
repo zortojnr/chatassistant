@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import PreLoginAnimation from './components/PreLoginAnimation';
 import LoginScreen from './components/LoginScreen';
 import SignUpScreen from './components/SignUpScreen';
 import AdminLogin from './components/AdminLogin';
@@ -52,8 +51,7 @@ function App() {
   };
 
   return (
-    <>
-      <PreLoginAnimation />
+    <div>
       {showAdminLogin ? (
         <AdminLogin 
           onLogin={handleAdminLogin}
@@ -75,7 +73,7 @@ function App() {
       ) : (
         <ChatInterface userData={user} onLogout={handleLogout} />
       )}
-    </>
+    </div>
   );
 }
 
