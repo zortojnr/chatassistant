@@ -96,7 +96,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-mau-primary via-mau-secondary to-mau-dark flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-mau-primary via-mau-secondary to-mau-primary flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* University Logo */}
         <motion.div
@@ -142,7 +142,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: universityName.length * 0.1 + 0.5 }}
-            className="text-mau-light text-sm mt-2"
+            className="text-white/80 text-sm mt-2"
           >
             Knowledge and Humanism
           </motion.p>
@@ -270,7 +270,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
                 {/* Submit */}
                 <Button 
                   type="submit" 
-                  className="w-full bg-mau-primary hover:bg-mau-secondary text-white py-2 rounded-md transition-colors mb-4"
+                  className="w-full bg-mau-primary hover:bg-mau-primary/90 text-white py-2 rounded-md transition-colors mb-4"
                   disabled={isLoading}
                 >
                   {isLoading ? 'Signing In...' : 'Access MAU Assistant'}
@@ -285,7 +285,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
                     type="button"
                     onClick={onSignUp}
                     variant="outline"
-                    className="w-full border-mau-primary text-mau-primary hover:bg-mau-light flex items-center justify-center gap-2"
+                    className="w-full border-mau-primary text-mau-primary hover:bg-mau-primary/10 flex items-center justify-center gap-2"
                   >
                     <UserPlus size={16} />
                     Sign Up as New Student
@@ -298,7 +298,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
                     type="button"
                     onClick={onAdminLogin}
                     variant="ghost"
-                    className="w-full text-mau-primary hover:bg-mau-light flex items-center justify-center gap-2"
+                    className="w-full text-mau-primary hover:bg-mau-primary/10 flex items-center justify-center gap-2"
                   >
                     <Shield size={16} />
                     Admin Access

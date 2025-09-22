@@ -37,8 +37,7 @@ const PreLoginAnimation: React.FC<PreLoginAnimationProps> = ({ onComplete }) => 
     }
   }, [currentWordIndex, currentLetterIndex, currentWord.length, onComplete]);
 
-  return (
-    <div className="fixed inset-0 bg-gradient-to-br from-mau-primary via-mau-secondary to-mau-dark flex items-center justify-center z-[-1]">
+    <div className="fixed inset-0 bg-gradient-to-br from-mau-primary via-mau-secondary to-mau-primary flex items-center justify-center z-[-1]">
       <div className="text-center">
         {/* University Logo */}
         <motion.div
@@ -92,7 +91,7 @@ const PreLoginAnimation: React.FC<PreLoginAnimationProps> = ({ onComplete }) => 
           initial={{ opacity: 0 }}
           animate={{ opacity: currentWordIndex >= words.length ? 1 : 0 }}
           transition={{ delay: 0.5, duration: 0.8 }}
-          className="text-mau-light text-lg mt-6"
+          className="text-white/80 text-lg mt-6"
         >
           Knowledge and Humanism
         </motion.p>

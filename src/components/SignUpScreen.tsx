@@ -97,7 +97,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onBack, onSignUp }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-mau-primary via-mau-secondary to-mau-dark flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-mau-primary via-mau-secondary to-mau-primary flex items-center justify-center p-4">
       <div className="w-full max-w-2xl">
         {/* University Logo */}
         <motion.div
@@ -117,6 +117,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onBack, onSignUp }) => {
             MODIBBO ADAMA UNIVERSITY
           </h1>
           <p className="text-mau-light text-sm mt-2">Knowledge and Humanism</p>
+          <p className="text-white/80 text-sm mt-2">Knowledge and Humanism</p>
         </motion.div>
 
         {/* Sign Up Form */}
@@ -288,7 +289,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onBack, onSignUp }) => {
 
                 <Button 
                   type="submit" 
-                  className="w-full bg-mau-primary hover:bg-mau-secondary text-white py-2 rounded-md transition-colors"
+                  className="w-full bg-mau-primary hover:bg-mau-primary/90 text-white py-2 rounded-md transition-colors"
                 >
                   Create Account & Access MAU Assistant
                 </Button>

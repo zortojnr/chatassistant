@@ -62,7 +62,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-mau-primary via-mau-secondary to-mau-dark flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-mau-primary via-mau-secondary to-mau-primary flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* University Logo */}
         <motion.div
@@ -82,6 +82,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onBack }) => {
             MAU ADMIN
           </h1>
           <p className="text-mau-light text-sm mt-2">System Administration</p>
+          <p className="text-white/80 text-sm mt-2">System Administration</p>
         </motion.div>
 
         {/* Admin Login Form */}
@@ -153,7 +154,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onBack }) => {
 
                 <Button 
                   type="submit" 
-                  className="w-full bg-mau-primary hover:bg-mau-secondary text-white py-2 rounded-md transition-colors"
+                  className="w-full bg-mau-primary hover:bg-mau-primary/90 text-white py-2 rounded-md transition-colors"
                   disabled={isLoading}
                 >
                   {isLoading ? 'Signing In...' : 'Access Dashboard'}
@@ -163,7 +164,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onBack }) => {
                   type="button"
                   onClick={onBack}
                   variant="outline"
-                  className="w-full border-mau-primary text-mau-primary hover:bg-mau-light"
+                  className="w-full border-mau-primary text-mau-primary hover:bg-mau-primary/10"
                 >
                   Back to Student Login
                 </Button>
