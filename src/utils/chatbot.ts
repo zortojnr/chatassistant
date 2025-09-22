@@ -72,10 +72,33 @@ What would you like to know about MAU?`;
 
 export async function processMessage(message: string, userData: UserData): Promise<ChatResponse> {
   // Simulate processing delay
-  await new Promise(resolve => setTimeout(resolve, 300));
+  await new Promise(resolve => setTimeout(resolve, 500));
   
   const { intent, confidence } = classifyIntent(message);
   const content = generateResponse(intent, message, userData);
+  
+  // If no specific response found, provide a helpful fallback
+  if (!content || content.includes('What specific information would you like to know about MAU?')) {
+    return {
+      content: `I can help you with information about Modibbo Adama University (MAU) including:
+
+**📚 Academic:** Course registration, grading system, results, transcripts
+**🎓 Admissions:** Requirements, status check, admission letters, clearance
+**💰 Fees:** Payment methods, RRR generation, receipts, deadlines
+**🏠 Accommodation:** Hostel application, fees, allocation
+**🏛️ Campus:** Location, library hours, facilities, student services
+**📞 Contacts:** University contacts, emergency numbers, support
+
+**Quick Links:**
+• [MAU Website](https://mau.edu.ng)
+• [Student Portal](https://mau.edu.ng/portals)
+• [Admissions Portal](https://mautech.safapply.com/)
+
+What specific information would you like to know about MAU?`,
+      intent: 'general_help',
+      confidence: 0.8
+    };
+  }
   
   return {
     content,

@@ -120,14 +120,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
     try {
       // Try AI response first, fallback to rule-based
       let responseContent: string;
-      try {
-        const context = `Student: ${userData.studentId}, Faculty: ${userData.faculty}, Level: ${userData.level}`;
-        responseContent = await generateAIResponse(inputMessage, context);
-      } catch (aiError) {
-        console.log('AI response failed, using fallback:', aiError);
-        const response = await processMessage(inputMessage, userData);
-        responseContent = response.content;
-      }
+      const response = await processMessage(inputMessage, userData);
+      responseContent = response.content;
       
       setTimeout(() => {
         const botMessage: ChatMessage = {
@@ -244,7 +238,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
                   MAU Assistant
                 </h1>
                 <p className="text-xs md:text-sm text-blue-200 leading-snug">
-                  Demo: CSC/20U/1234, ENG/21U/5678, PHY/22U/9012, BIO/20U/3456, EDU/19U/7890 + password "password"
+                  Your intelligent assistant for MAU academic support
                 </p>
               </div>
             </div>
