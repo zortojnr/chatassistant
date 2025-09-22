@@ -88,103 +88,7 @@ export interface AuthUser extends UserData {
 }
 
 export async function loginStudent(studentId: string, password: string): Promise<AuthUser | null> {
-  try {
-    console.log('Attempting login with:', studentId, password);
-    
-    // Check if password is correct first
-    if (password !== 'password') {
-      console.log('Password mismatch');
-      return null;
-    }
-
-    // Validate student ID format (XXX/YYZ/NNNN)
-    const studentIdPattern = /^[A-Z]{3}\/\d{2}[A-Z]\/\d{4}$/;
-    if (!studentIdPattern.test(studentId)) {
-      console.log('Invalid student ID format');
-      return null;
-    }
-
-    // Try Supabase first, fallback to mock data
-    try {
-      const { data, error } = await supabase
-        .from('students')
-        .select('*')
-        .eq('student_id', studentId)
-        .single();
-
-      if (!error && data) {
-        return {
-          id: data.id,
-          studentId: data.student_id,
-          email: data.email,
-          firstName: data.first_name,
-          lastName: data.last_name,
-          faculty: data.faculty,
-          level: data.level,
-          year: data.year,
-          phoneNumber: data.phone_number,
-          studentType: data.student_type,
-          department: data.department,
-        };
-      }
-    } catch (supabaseError) {
-      console.log('Supabase not available, using mock data');
-    }
-
-    // Generate student data from ID format for any valid student ID
-    const facultyMap: { [key: string]: string } = {
-      'CSC': 'Faculty of Computing',
-      'AGR': 'Faculty of Agriculture',
-      'EDU': 'Faculty of Education',
-      'ENG': 'Faculty of Engineering',
-      'CHE': 'Faculty of Engineering',
-      'CIV': 'Faculty of Engineering',
-      'EEE': 'Faculty of Engineering',
-      'MEE': 'Faculty of Engineering',
-      'PHY': 'Faculty of Physical Science',
-      'MAT': 'Faculty of Physical Science',
-      'STA': 'Faculty of Physical Science',
-      'GEO': 'Faculty of Physical Science',
-      'BIO': 'Faculty of Life Science',
-      'BOT': 'Faculty of Life Science',
-      'ZOO': 'Faculty of Life Science',
-      'MIC': 'Faculty of Life Science',
-      'BCH': 'Faculty of Life Science'
-    };
-
-    const departmentCode = studentId.substring(0, 3);
-    const yearCode = studentId.substring(4, 6);
-    const faculty = facultyMap[departmentCode] || 'Faculty of Computing';
-    
-    // Generate level based on current year and admission year
-    const currentYear = new Date().getFullYear();
-    const admissionYear = 2000 + parseInt(yearCode);
-    const yearsSinceAdmission = currentYear - admissionYear;
-    let level = '100 Level';
-    
-    if (yearsSinceAdmission >= 4) level = '500 Level';
-    else if (yearsSinceAdmission >= 3) level = '400 Level';
-    else if (yearsSinceAdmission >= 2) level = '300 Level';
-    else if (yearsSinceAdmission >= 1) level = '200 Level';
-
-    console.log('Login successful for:', studentId);
-    return {
-      id: Date.now().toString(),
-      studentId: studentId,
-      email: `${studentId.toLowerCase().replace(/\//g, '.')}@mau.edu.ng`,
-      firstName: 'Student',
-      lastName: 'User',
-      faculty: faculty,
-      level: level,
-      year: currentYear.toString(),
-      phoneNumber: '08012345678',
-      studentType: 'Regular Undergraduate',
-      department: departmentCode,
-    };
-  } catch (error) {
-    console.error('Login error:', error);
-    return null;
-  }
+  return loginStudentWithTimeout(studentId, password);
 }
 
 export async function registerStudent(userData: any): Promise<AuthUser | null> {
@@ -252,25 +156,22 @@ export async function registerStudent(userData: any): Promise<AuthUser | null> {
 
 export async function loginAdmin(username: string, password: string): Promise<any> {
   try {
-    console.time('loginAdmin Supabase query time');
     // Try Supabase first, fallback to mock data
     try {
-      // Supabase client does not support AbortController natively, so implement manual timeout
-      let timeoutId: NodeJS.Timeout | undefined;
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        timeoutId = setTimeout(() => reject(new Error('Request timed out')), 3000);
+      // Create a timeout promise that rejects after 2 seconds
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Request timed out')), 2000);
       });
 
+      // Create the Supabase query promise
       const supabasePromise = supabase
         .from('admin_users')
         .select('*')
         .eq('username', username)
         .single();
 
+      // Race between the query and timeout
       const result = await Promise.race([supabasePromise, timeoutPromise]);
-      if (timeoutId) clearTimeout(timeoutId);
-      console.timeEnd('loginAdmin Supabase query time');
-
       const { data, error } = result as { data: any; error: any };
 
       if (!error && data) {
@@ -286,7 +187,7 @@ export async function loginAdmin(username: string, password: string): Promise<an
         };
       }
     } catch (supabaseError) {
-      console.log('Supabase not available or request timed out, using mock admin');
+      console.log('Supabase not available, using mock admin');
     }
 
     // Fallback to mock admin
@@ -305,6 +206,116 @@ export async function loginAdmin(username: string, password: string): Promise<an
     };
   } catch (error) {
     console.error('Admin login error:', error);
+    return null;
+  }
+}
+
+export async function loginStudentWithTimeout(studentId: string, password: string): Promise<AuthUser | null> {
+  try {
+    console.log('Attempting login with:', studentId, password);
+    
+    // Check if password is correct first
+    if (password !== 'password') {
+      console.log('Password mismatch');
+      return null;
+    }
+
+    // Validate student ID format (XXX/YYZ/NNNN)
+    const studentIdPattern = /^[A-Z]{3}\/\d{2}[A-Z]\/\d{4}$/;
+    if (!studentIdPattern.test(studentId)) {
+      console.log('Invalid student ID format');
+      return null;
+    }
+
+    // Try Supabase with timeout, fallback to mock data
+    try {
+      // Create a timeout promise that rejects after 2 seconds
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Request timed out')), 2000);
+      });
+
+      // Create the Supabase query promise
+      const supabasePromise = supabase
+        .from('students')
+        .select('*')
+        .eq('student_id', studentId)
+        .single();
+
+      // Race between the query and timeout
+      const result = await Promise.race([supabasePromise, timeoutPromise]);
+      const { data, error } = result as { data: any; error: any };
+
+      if (!error && data) {
+        return {
+          id: data.id,
+          studentId: data.student_id,
+          email: data.email,
+          firstName: data.first_name,
+          lastName: data.last_name,
+          faculty: data.faculty,
+          level: data.level,
+          year: data.year,
+          phoneNumber: data.phone_number,
+          studentType: data.student_type,
+          department: data.department,
+        };
+      }
+    } catch (supabaseError) {
+      console.log('Supabase not available, using mock data generation');
+    }
+
+    // Generate student data from ID format for any valid student ID
+    const facultyMap: { [key: string]: string } = {
+      'CSC': 'Faculty of Computing',
+      'AGR': 'Faculty of Agriculture',
+      'EDU': 'Faculty of Education',
+      'ENG': 'Faculty of Engineering',
+      'CHE': 'Faculty of Engineering',
+      'CIV': 'Faculty of Engineering',
+      'EEE': 'Faculty of Engineering',
+      'MEE': 'Faculty of Engineering',
+      'PHY': 'Faculty of Physical Science',
+      'MAT': 'Faculty of Physical Science',
+      'STA': 'Faculty of Physical Science',
+      'GEO': 'Faculty of Physical Science',
+      'BIO': 'Faculty of Life Science',
+      'BOT': 'Faculty of Life Science',
+      'ZOO': 'Faculty of Life Science',
+      'MIC': 'Faculty of Life Science',
+      'BCH': 'Faculty of Life Science'
+    };
+
+    const departmentCode = studentId.substring(0, 3);
+    const yearCode = studentId.substring(4, 6);
+    const faculty = facultyMap[departmentCode] || 'Faculty of Computing';
+    
+    // Generate level based on current year and admission year
+    const currentYear = new Date().getFullYear();
+    const admissionYear = 2000 + parseInt(yearCode);
+    const yearsSinceAdmission = currentYear - admissionYear;
+    let level = '100 Level';
+    
+    if (yearsSinceAdmission >= 4) level = '500 Level';
+    else if (yearsSinceAdmission >= 3) level = '400 Level';
+    else if (yearsSinceAdmission >= 2) level = '300 Level';
+    else if (yearsSinceAdmission >= 1) level = '200 Level';
+
+    console.log('Login successful for:', studentId);
+    return {
+      id: Date.now().toString(),
+      studentId: studentId,
+      email: `${studentId.toLowerCase().replace(/\//g, '.')}@mau.edu.ng`,
+      firstName: 'Student',
+      lastName: 'User',
+      faculty: faculty,
+      level: level,
+      year: currentYear.toString(),
+      phoneNumber: '08012345678',
+      studentType: 'Regular Undergraduate',
+      department: departmentCode,
+    };
+  } catch (error) {
+    console.error('Login error:', error);
     return null;
   }
 }
