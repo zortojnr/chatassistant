@@ -14,7 +14,7 @@ import {
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { supabase } from '../lib/supabase';
+import { supabase, isUsingDemoCredentials } from '../lib/supabase';
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -62,6 +62,23 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
 
   const fetchDashboardStats = async () => {
     try {
+      // If using demo credentials, return mock data
+      if (isUsingDemoCredentials()) {
+        setStats({
+          totalStudents: 1247,
+          totalChats: 3892,
+          activeToday: 156,
+          topQuestions: [
+            { question: "How do I register for courses?", count: 45 },
+            { question: "What are the payment methods?", count: 32 },
+            { question: "Where is the library located?", count: 28 },
+            { question: "How do I check my results?", count: 24 },
+            { question: "What is the grading system?", count: 19 }
+          ]
+        });
+        return;
+      }
+
       // Fetch total students
       const { count: studentCount } = await supabase
         .from('students')
@@ -98,6 +115,59 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
 
   const fetchRealtimeChats = async () => {
     try {
+      // If using demo credentials, return mock data
+      if (isUsingDemoCredentials()) {
+        const mockChats = [
+          {
+            id: 1,
+            content: "How do I register for the new semester?",
+            is_user: true,
+            created_at: new Date().toISOString(),
+            intent: "registration",
+            chat_sessions: {
+              title: "Registration Help",
+              students: {
+                student_id: "MAU2024001",
+                first_name: "John",
+                last_name: "Doe"
+              }
+            }
+          },
+          {
+            id: 2,
+            content: "To register for the new semester, please visit the student portal and follow the course selection process.",
+            is_user: false,
+            created_at: new Date(Date.now() - 30000).toISOString(),
+            intent: "registration",
+            chat_sessions: {
+              title: "Registration Help",
+              students: {
+                student_id: "MAU2024001",
+                first_name: "John",
+                last_name: "Doe"
+              }
+            }
+          },
+          {
+            id: 3,
+            content: "What are the payment options for tuition fees?",
+            is_user: true,
+            created_at: new Date(Date.now() - 120000).toISOString(),
+            intent: "payment",
+            chat_sessions: {
+              title: "Payment Inquiry",
+              students: {
+                student_id: "MAU2024002",
+                first_name: "Jane",
+                last_name: "Smith"
+              }
+            }
+          }
+        ];
+        setRealtimeChats(mockChats);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('chat_messages')
         .select(`
