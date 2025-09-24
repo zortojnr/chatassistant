@@ -155,6 +155,8 @@ export async function registerStudent(userData: any): Promise<AuthUser | null> {
 
 export async function loginAdmin(username: string, password: string): Promise<any> {
   try {
+    console.log('Admin login attempt:', username, password);
+    
     // Skip Supabase if using demo credentials
     if (!isUsingDemoCredentials) {
       const { data, error } = await supabase
@@ -178,14 +180,17 @@ export async function loginAdmin(username: string, password: string): Promise<an
     }
 
     // Fallback to mock admin
-    if (username !== 'admin') {
+    if (username.toLowerCase() !== 'admin') {
+      console.log('Invalid username');
       return null;
     }
 
     if (password !== 'admin123') {
+      console.log('Invalid password');
       return null;
     }
 
+    console.log('Admin login successful');
     return {
       id: MOCK_ADMIN.id,
       username: MOCK_ADMIN.username,

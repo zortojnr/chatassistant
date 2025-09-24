@@ -17,6 +17,8 @@ function App() {
   };
 
   const handleSignUp = (userData: any) => {
+    console.log('Handling signup:', userData);
+    
     // Create a proper AuthUser object from signup data
     const authUser = {
       id: Date.now().toString(),
@@ -24,13 +26,15 @@ function App() {
       email: userData.email,
       firstName: userData.firstName,
       lastName: userData.lastName,
-      faculty: userData.faculty || 'Computing',
+      faculty: userData.faculty || 'Faculty of Computing',
       level: userData.level,
       year: userData.year,
       phoneNumber: userData.phoneNumber,
       studentType: userData.studentType,
       department: userData.department
     };
+    
+    console.log('Created auth user:', authUser);
     setUser(authUser);
   };
 

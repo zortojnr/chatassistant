@@ -57,11 +57,11 @@ function generateResponse(intent: string, message: string, userData: UserData): 
     return `Hello! I'm your MAU Assistant. 👋
 
 I can help you with:
-• **Admissions** - Requirements, status check, documents
-• **Fees & Payment** - School fees, RRR generation, receipts  
-• **Accommodation** - Hostel application, fees, allocation
-• **Academic** - Course registration, grading, results
-• **Campus Life** - Facilities, contacts, student services
+• Admissions - Requirements, status check, documents
+• Fees & Payment - School fees, RRR generation, receipts  
+• Accommodation - Hostel application, fees, allocation
+• Academic - Course registration, grading, results
+• Campus Life - Facilities, contacts, student services
 
 What would you like to know about MAU?`;
   }
@@ -82,17 +82,17 @@ export async function processMessage(message: string, userData: UserData): Promi
     return {
       content: `I can help you with information about Modibbo Adama University (MAU) including:
 
-**📚 Academic:** Course registration, grading system, results, transcripts
-**🎓 Admissions:** Requirements, status check, admission letters, clearance
-**💰 Fees:** Payment methods, RRR generation, receipts, deadlines
-**🏠 Accommodation:** Hostel application, fees, allocation
-**🏛️ Campus:** Location, library hours, facilities, student services
-**📞 Contacts:** University contacts, emergency numbers, support
+📚 Academic: Course registration, grading system, results, transcripts
+🎓 Admissions: Requirements, status check, admission letters, clearance
+💰 Fees: Payment methods, RRR generation, receipts, deadlines
+🏠 Accommodation: Hostel application, fees, allocation
+🏛️ Campus: Location, library hours, facilities, student services
+📞 Contacts: University contacts, emergency numbers, support
 
-**Quick Links:**
-• [MAU Website](https://mau.edu.ng)
-• [Student Portal](https://mau.edu.ng/portals)
-• [Admissions Portal](https://mautech.safapply.com/)
+Quick Links:
+• MAU Website: https://mau.edu.ng
+• Student Portal: https://mau.edu.ng/portals
+• Admissions Portal: https://mautech.safapply.com/
 
 What specific information would you like to know about MAU?`,
       intent: 'general_help',

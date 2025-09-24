@@ -54,13 +54,13 @@ export const qnaDatabase = [
   // Fees
   {
     question: "How much is the school fees?",
-    answer: "Fees vary by faculty and level. Check the latest breakdown at [MAU Portals](https://mau.edu.ng/portals). On average: **₦40,000 – ₦70,000 per session** (excluding hostel).",
+    answer: "Fees vary by faculty and level. Check the latest breakdown at MAU Portals (https://mau.edu.ng/portals). On average: ₦40,000 – ₦70,000 per session (excluding hostel).",
     category: "fees",
     keywords: ["school fees", "cost", "tuition", "amount", "price"]
   },
   {
     question: "How do I pay my school fees online?",
-    answer: "Log into the [MAU Student Portal](https://mau.edu.ng/portals), generate your RRR (Remita), pay online or at the bank, then return to the portal to confirm payment.",
+    answer: "Log into the MAU Student Portal (https://mau.edu.ng/portals), generate your RRR (Remita), pay online or at the bank, then return to the portal to confirm payment.",
     category: "fees",
     keywords: ["school fees", "payment", "online", "remita", "portal"]
   },
@@ -116,7 +116,7 @@ export const qnaDatabase = [
   },
   {
     question: "How much is hostel fee and how do I pay?",
-    answer: "On average: **₦15,000 – ₦25,000 per session**. Pay through Remita and confirm at the Student Affairs Division.",
+    answer: "On average: ₦15,000 – ₦25,000 per session. Pay through Remita and confirm at the Student Affairs Division.",
     category: "hostel",
     keywords: ["hostel fees", "payment", "accommodation", "cost"]
   },
@@ -264,17 +264,17 @@ export function searchMauKnowledgeBase(query: string): string {
   // Additional general MAU information for broader queries
   if (lowerQuery.includes('mau') || lowerQuery.includes('modibbo adama') || lowerQuery.includes('university')) {
     if (lowerQuery.includes('about') || lowerQuery.includes('information')) {
-      return `**About Modibbo Adama University (MAU)**
+      return `About Modibbo Adama University (MAU)
 
 MAU is a Federal University established in 1988, located in Yola, Adamawa State, Nigeria. The university's motto is "Knowledge for Development" and it's committed to providing excellent education, research and community service.
 
-**Key Information:**
-• **Location:** PMB 2076, Yola, Adamawa State
-• **Vice-Chancellor:** Prof. Abdullahi Liman Tukur
-• **Website:** [https://mau.edu.ng](https://mau.edu.ng)
-• **Contact:** +234-75-627-094, info@mau.edu.ng
+Key Information:
+• Location: PMB 2076, Yola, Adamawa State
+• Vice-Chancellor: Prof. Abdullahi Liman Tukur
+• Website: https://mau.edu.ng
+• Contact: +234-75-627-094, info@mau.edu.ng
 
-**Faculties:** Agriculture, Computing, Education, Engineering, Life Sciences, Physical Sciences
+Faculties: Agriculture, Computing, Education, Engineering, Life Sciences, Physical Sciences
 
 For specific questions about admissions, fees, accommodation, or academic matters, just ask!`;
     }
@@ -283,17 +283,17 @@ For specific questions about admissions, fees, accommodation, or academic matter
   // Fallback response for unmatched queries
   return `I can help you with information about Modibbo Adama University (MAU) including:
 
-**📚 Academic:** Course registration, grading system, results, transcripts
-**🎓 Admissions:** Requirements, status check, admission letters, clearance
-**💰 Fees:** Payment methods, RRR generation, receipts, deadlines
-**🏠 Accommodation:** Hostel application, fees, allocation
-**🏛️ Campus:** Location, library hours, facilities, student services
-**📞 Contacts:** University contacts, emergency numbers, support
+📚 Academic: Course registration, grading system, results, transcripts
+🎓 Admissions: Requirements, status check, admission letters, clearance
+💰 Fees: Payment methods, RRR generation, receipts, deadlines
+🏠 Accommodation: Hostel application, fees, allocation
+🏛️ Campus: Location, library hours, facilities, student services
+📞 Contacts: University contacts, emergency numbers, support
 
-**Quick Links:**
-• [MAU Website](https://mau.edu.ng)
-• [Student Portal](https://mau.edu.ng/portals)
-• [Admissions Portal](https://mautech.safapply.com/)
+Quick Links:
+• MAU Website: https://mau.edu.ng
+• Student Portal: https://mau.edu.ng/portals
+• Admissions Portal: https://mautech.safapply.com/
 
 What specific information would you like to know about MAU?`;
 }

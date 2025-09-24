@@ -35,11 +35,11 @@ export const QUICK_INFO: QuickInfoCategory[] = [
     items: [
       {
         question: 'How much is the school fees?',
-        answer: 'Fees vary by faculty and level. Check the latest breakdown at [MAU Portals](https://mau.edu.ng/portals). On average: **₦40,000 – ₦70,000 per session** (excluding hostel).'
+        answer: 'Fees vary by faculty and level. Check the latest breakdown at MAU Portals (https://mau.edu.ng/portals). On average: ₦40,000 – ₦70,000 per session (excluding hostel).'
       },
       {
         question: 'How do I pay my school fees online?',
-        answer: 'Log into the [MAU Student Portal](https://mau.edu.ng/portals), generate your RRR (Remita), pay online or at the bank, then return to the portal to confirm payment.'
+        answer: 'Log into the MAU Student Portal (https://mau.edu.ng/portals), generate your RRR (Remita), pay online or at the bank, then return to the portal to confirm payment.'
       },
       {
         question: 'How do I generate my RRR (Remita)?',
@@ -70,7 +70,7 @@ export const QUICK_INFO: QuickInfoCategory[] = [
       },
       {
         question: 'How much is hostel fee and how do I pay?',
-        answer: 'On average: **₦15,000 – ₦25,000 per session**. Pay through Remita and confirm at the Student Affairs Division.'
+        answer: 'On average: ₦15,000 – ₦25,000 per session. Pay through Remita and confirm at the Student Affairs Division.'
       },
       {
         question: 'When does hostel application open?',

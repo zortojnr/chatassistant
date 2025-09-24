@@ -67,23 +67,29 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onBack, onSignUp }) => {
     if (!formData.phoneNumber.trim()) newErrors.phoneNumber = 'Phone number is required';
     if (!formData.studentType) newErrors.studentType = 'Please select student type';
     if (!formData.level) newErrors.level = 'Please select your academic level';
+    if (!formData.studentType) newErrors.studentType = 'Please select student type';
 
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
       try {
         // Generate temporary student ID for new users
-        const tempId = `TEMP/${new Date().getFullYear().toString().slice(-2)}U/${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
+        const facultyCode = formData.faculty ? formData.faculty.substring(0, 3).toUpperCase() : 'STU';
+        const yearCode = new Date().getFullYear().toString().slice(-2);
+        const randomNum = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+        const tempId = `${facultyCode}/${yearCode}U/${randomNum}`;
         
         const userData = {
           ...formData,
           studentId: tempId,
-          isNewUser: true
+          isNewUser: true,
+          faculty: formData.faculty || 'Computing'
         };
         
-        // Call the signup function which should handle registration
+        console.log('Signing up user:', userData);
         onSignUp(userData);
       } catch (error) {
+        console.error('Signup error:', error);
         setErrors({ general: 'Registration failed. Please try again.' });
       }
     }
@@ -215,9 +221,12 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onBack, onSignUp }) => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Faculty (Optional)
+                    Student Type *
                   </label>
-                  <Select onValueChange={(value) => handleInputChange('studentType', value)}>
+                  <Select 
+                    value={formData.studentType}
+                    onValueChange={(value) => handleInputChange('studentType', value)}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select your student type" />
                     </SelectTrigger>
@@ -234,10 +243,13 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onBack, onSignUp }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Faculty *
+                      Faculty (Optional)
                     </label>
-                    <Select onValueChange={(value) => handleInputChange('faculty', value)}>
-                      <SelectTrigger className={errors.faculty ? 'border-red-500' : ''}>
+                    <Select 
+                      value={formData.faculty}
+                      onValueChange={(value) => handleInputChange('faculty', value)}
+                    >
+                      <SelectTrigger>
                         <SelectValue placeholder="Select your faculty" />
                       </SelectTrigger>
                       <SelectContent>
@@ -248,16 +260,16 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ onBack, onSignUp }) => {
                         ))}
                       </SelectContent>
                     </Select>
-                    {errors.faculty && (
-                      <p className="text-red-500 text-xs mt-1">{errors.faculty}</p>
-                    )}
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Academic Level *
                     </label>
-                    <Select onValueChange={(value) => handleInputChange('level', value)}>
+                    <Select 
+                      value={formData.level}
+                      onValueChange={(value) => handleInputChange('level', value)}
+                    >
                       <SelectTrigger className={errors.level ? 'border-red-500' : ''}>
                         <SelectValue placeholder="Select your level" />
                       </SelectTrigger>
