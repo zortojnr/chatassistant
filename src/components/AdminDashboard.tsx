@@ -28,6 +28,8 @@ interface DashboardStats {
 }
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
+  console.log('AdminDashboard component rendered');
+  
   const [activeTab, setActiveTab] = useState('overview');
   const [stats, setStats] = useState<DashboardStats>({
     totalStudents: 0,

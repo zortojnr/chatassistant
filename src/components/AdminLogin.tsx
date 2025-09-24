@@ -22,7 +22,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onBack }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Admin form submit:', formData);
+    console.log('Admin form submit - Username:', formData.username, 'Password:', formData.password);
     
     const newErrors: Record<string, string> = {};
 
@@ -39,7 +39,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onBack }) => {
     if (Object.keys(newErrors).length === 0) {
       setIsLoading(true);
       try {
-        console.log('Attempting admin login...');
+        console.log('Attempting admin login with credentials:', formData.username, formData.password);
         const adminData = await loginAdmin(formData.username, formData.password);
         console.log('Admin login result:', adminData);
         

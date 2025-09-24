@@ -39,6 +39,7 @@ function App() {
   };
 
   const handleAdminLogin = (adminData: any) => {
+    console.log('App.tsx - handleAdminLogin called with:', adminData);
     setAdmin(adminData);
   };
 
