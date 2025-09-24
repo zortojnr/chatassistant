@@ -9,7 +9,8 @@ import {
   Eye,
   TrendingUp,
   Clock,
-  Search
+  Search,
+  RefreshCw
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -24,7 +25,7 @@ interface DashboardStats {
   totalStudents: number;
   totalChats: number;
   activeToday: number;
-  topQuestions: { question: string; count: number }[];
+  topQuestions: { question: string; count?: number }[];
 }
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
@@ -39,156 +40,186 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   });
   const [realtimeChats, setRealtimeChats] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     fetchDashboardStats();
     fetchRealtimeChats();
     
     // Set up real-time subscription for new messages
-    const subscription = supabase
-      .channel('chat_messages')
-      .on('postgres_changes', 
-        { event: 'INSERT', schema: 'public', table: 'chat_messages' },
-        (payload) => {
-          fetchRealtimeChats();
-        }
-      )
-      .subscribe();
+    let subscription;
+    
+    if (!isUsingDemoCredentials) {
+      subscription = supabase
+        .channel('chat_messages')
+        .on('postgres_changes', 
+          { event: 'INSERT', schema: 'public', table: 'chat_messages' },
+          (payload) => {
+            console.log('New message received:', payload);
+            fetchRealtimeChats();
+            fetchDashboardStats();
+          }
+        )
+        .subscribe();
+    }
 
     return () => {
-      subscription.unsubscribe();
+      if (subscription) {
+        subscription.unsubscribe();
+      }
     };
   }, []);
 
   const fetchDashboardStats = async () => {
     try {
-      // If using demo credentials, return mock data
+      let totalStudents = 0;
+      let totalChats = 0;
+      let activeToday = 0;
+      let topQuestions: { question: string; count?: number }[] = [];
+
       if (isUsingDemoCredentials) {
-        setStats({
-          totalStudents: 1247,
-          totalChats: 3892,
-          activeToday: 156,
-          topQuestions: [
-            { question: "How do I register for courses?", count: 45 },
-            { question: "What are the payment methods?", count: 32 },
-            { question: "Where is the library located?", count: 28 },
-            { question: "How do I check my results?", count: 24 },
-            { question: "What is the grading system?", count: 19 }
-          ]
-        });
-        return;
-      }
-
-      // Fetch total students
-      const { count: studentCount } = await supabase
-        .from('students')
-        .select('*', { count: 'exact', head: true });
-
-      // Fetch total chat sessions
-      const { count: chatCount } = await supabase
-        .from('chat_sessions')
-        .select('*', { count: 'exact', head: true });
-
-      // Fetch today's active users
-      const today = new Date().toISOString().split('T')[0];
-      const { count: activeToday } = await supabase
-        .from('chat_sessions')
-        .select('*', { count: 'exact', head: true })
-        .gte('created_at', today);
-
-      setStats({
-        totalStudents: studentCount || 0,
-        totalChats: chatCount || 0,
-        activeToday: activeToday || 0,
-        topQuestions: [
-          { question: "How do I register for courses?", count: 45 },
-          { question: "What are the payment methods?", count: 32 },
-          { question: "Where is the library located?", count: 28 },
-          { question: "How do I check my results?", count: 24 },
-          { question: "What is the grading system?", count: 19 }
+        // Use localStorage to track demo users
+        const demoUsers = JSON.parse(localStorage.getItem('demoUsers') || '[]');
+        const demoChats = JSON.parse(localStorage.getItem('demoChats') || '[]');
+        
+        totalStudents = demoUsers.length;
+        totalChats = demoChats.length;
+        
+        // Count today's chats
+        const today = new Date().toDateString();
+        activeToday = demoChats.filter((chat: any) => 
+          new Date(chat.created_at).toDateString() === today
+        ).length;
+        
+        topQuestions = [
+          { question: "How do I register for courses?" },
+          { question: "What are the payment methods?" },
+          { question: "Where is the library located?" },
+          { question: "How do I check my results?" },
+          { question: "What is the grading system?" }
         ]
+      } else {
+        // Fetch real data from Supabase
+        const { count: studentCount } = await supabase
+          .from('students')
+          .select('*', { count: 'exact', head: true });
+
+        const { count: chatCount } = await supabase
+          .from('chat_sessions')
+          .select('*', { count: 'exact', head: true });
+
+        const today = new Date().toISOString().split('T')[0];
+        const { count: activeTodayCount } = await supabase
+          .from('chat_sessions')
+          .select('*', { count: 'exact', head: true })
+          .gte('created_at', today);
+
+        totalStudents = studentCount || 0;
+        totalChats = chatCount || 0;
+        activeToday = activeTodayCount || 0;
+        
+        // Get frequently asked questions from chat messages
+        const { data: messages } = await supabase
+          .from('chat_messages')
+          .select('content')
+          .eq('is_user', true)
+          .limit(100);
+          
+        if (messages) {
+          // Simple frequency analysis of user messages
+          const questionCounts: { [key: string]: number } = {};
+          messages.forEach(msg => {
+            const content = msg.content.toLowerCase();
+            if (content.includes('register') || content.includes('registration')) {
+              questionCounts['How do I register for courses?'] = (questionCounts['How do I register for courses?'] || 0) + 1;
+            }
+            if (content.includes('payment') || content.includes('fee') || content.includes('pay')) {
+              questionCounts['What are the payment methods?'] = (questionCounts['What are the payment methods?'] || 0) + 1;
+            }
+            if (content.includes('library')) {
+              questionCounts['Where is the library located?'] = (questionCounts['Where is the library located?'] || 0) + 1;
+            }
+            if (content.includes('result') || content.includes('grade')) {
+              questionCounts['How do I check my results?'] = (questionCounts['How do I check my results?'] || 0) + 1;
+            }
+            if (content.includes('grading') || content.includes('system')) {
+              questionCounts['What is the grading system?'] = (questionCounts['What is the grading system?'] || 0) + 1;
+            }
+          });
+          
+          topQuestions = Object.entries(questionCounts)
+            .sort(([,a], [,b]) => b - a)
+            .slice(0, 5)
+            .map(([question, count]) => ({ question, count }));
+        }
+        
+        if (topQuestions.length === 0) {
+          topQuestions = [
+            { question: "How do I register for courses?" },
+            { question: "What are the payment methods?" },
+            { question: "Where is the library located?" },
+            { question: "How do I check my results?" },
+            { question: "What is the grading system?" }
+          ];
+        }
+      }
+      
+      setStats({
+        totalStudents,
+        totalChats,
+        activeToday,
+        topQuestions
       });
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
+      // Fallback to basic stats
+      setStats({
+        totalStudents: 0,
+        totalChats: 0,
+        activeToday: 0,
+        topQuestions: [
+          { question: "How do I register for courses?" },
+          { question: "What are the payment methods?" },
+          { question: "Where is the library located?" },
+          { question: "How do I check my results?" },
+          { question: "What is the grading system?" }
+        ]
+      });
     }
   };
 
   const fetchRealtimeChats = async () => {
+    setIsRefreshing(true);
     try {
-      // If using demo credentials, return mock data
       if (isUsingDemoCredentials) {
-        const mockChats = [
-          {
-            id: 1,
-            content: "How do I register for the new semester?",
-            is_user: true,
-            created_at: new Date().toISOString(),
-            intent: "registration",
-            chat_sessions: {
-              title: "Registration Help",
-              students: {
-                student_id: "MAU2024001",
-                first_name: "John",
-                last_name: "Doe"
-              }
-            }
-          },
-          {
-            id: 2,
-            content: "To register for the new semester, please visit the student portal and follow the course selection process.",
-            is_user: false,
-            created_at: new Date(Date.now() - 30000).toISOString(),
-            intent: "registration",
-            chat_sessions: {
-              title: "Registration Help",
-              students: {
-                student_id: "MAU2024001",
-                first_name: "John",
-                last_name: "Doe"
-              }
-            }
-          },
-          {
-            id: 3,
-            content: "What are the payment options for tuition fees?",
-            is_user: true,
-            created_at: new Date(Date.now() - 120000).toISOString(),
-            intent: "payment",
-            chat_sessions: {
-              title: "Payment Inquiry",
-              students: {
-                student_id: "MAU2024002",
-                first_name: "Jane",
-                last_name: "Smith"
-              }
-            }
-          }
-        ];
-        setRealtimeChats(mockChats);
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from('chat_messages')
-        .select(`
-          *,
-          chat_sessions (
-            title,
-            students (
-              student_id,
-              first_name,
-              last_name
+        // Get real demo chats from localStorage
+        const demoChats = JSON.parse(localStorage.getItem('demoChats') || '[]');
+        setRealtimeChats(demoChats);
+      } else {
+        const { data, error } = await supabase
+          .from('chat_messages')
+          .select(`
+            *,
+            chat_sessions (
+              title,
+              students (
+                student_id,
+                first_name,
+                last_name
+              )
             )
-          )
-        `)
-        .order('created_at', { ascending: false })
-        .limit(20);
+          `)
+          .order('created_at', { ascending: false })
+          .limit(50);
 
-      if (!error && data) {
-        setRealtimeChats(data);
+        if (!error && data) {
+          setRealtimeChats(data);
+        }
       }
     } catch (error) {
       console.error('Error fetching realtime chats:', error);
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
@@ -244,7 +275,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
             {stats.topQuestions.map((item, index) => (
               <div key={index} className="flex items-center justify-between p-3 bg-mau-light rounded-lg">
                 <span className="text-sm text-gray-700">{item.question}</span>
-                <span className="text-sm font-medium text-mau-primary">{item.count}</span>
+                {item.count && (
+                  <span className="text-sm font-medium text-mau-primary">{item.count}</span>
+                )}
               </div>
             ))}
           </div>
@@ -268,8 +301,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         <Button 
           onClick={fetchRealtimeChats}
           className="bg-mau-primary hover:bg-mau-secondary"
+          disabled={isRefreshing}
         >
-          Refresh
+          <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+          {isRefreshing ? 'Refreshing...' : 'Refresh'}
         </Button>
       </div>
 
@@ -283,11 +318,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4 max-h-96 overflow-y-auto">
-            {filteredChats.map((chat, index) => (
+            {filteredChats.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>No chat messages found</p>
+                <p className="text-sm">Messages will appear here as students interact with the assistant</p>
+              </div>
+            ) : (
+            filteredChats.map((chat, index) => (
               <div key={index} className="border-l-4 border-mau-primary pl-4 py-2">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm font-medium text-mau-primary">
-                    {chat.chat_sessions?.students?.student_id || 'Unknown Student'}
+                    {chat.chat_sessions?.students?.student_id || chat.student_id || 'Unknown Student'}
                   </span>
                   <span className="text-xs text-gray-500 flex items-center gap-1">
                     <Clock className="h-3 w-3" />
@@ -312,7 +354,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                   )}
                 </div>
               </div>
-            ))}
+            ))
+            )}
           </div>
         </CardContent>
       </Card>

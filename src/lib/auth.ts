@@ -89,12 +89,27 @@ export interface AuthUser extends UserData {
 }
 
 export async function loginStudent(studentId: string, password: string): Promise<AuthUser | null> {
-  return loginStudentWithTimeout(studentId, password);
+  const result = await loginStudentWithTimeout(studentId, password);
+  
+  // Track user login for admin dashboard
+  if (result && isUsingDemoCredentials) {
+    const demoUsers = JSON.parse(localStorage.getItem('demoUsers') || '[]');
+    const existingUser = demoUsers.find((user: any) => user.studentId === result.studentId);
+    
+    if (!existingUser) {
+      demoUsers.push({
+        ...result,
+        loginTime: new Date().toISOString()
+      });
+      localStorage.setItem('demoUsers', JSON.stringify(demoUsers));
+    }
+  }
+  
+  return result;
 }
 
 export async function registerStudent(userData: any): Promise<AuthUser | null> {
   try {
-    // Skip Supabase if using demo credentials
     if (!isUsingDemoCredentials) {
       const { data, error } = await supabase
         .from('students')
@@ -131,7 +146,6 @@ export async function registerStudent(userData: any): Promise<AuthUser | null> {
       }
     }
 
-    // Fallback to mock registration
     const newStudent = {
       id: Date.now().toString(),
       studentId: userData.studentId || `TEMP/${new Date().getFullYear().toString().slice(-2)}/${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`,
@@ -145,6 +159,16 @@ export async function registerStudent(userData: any): Promise<AuthUser | null> {
       studentType: userData.studentType,
       department: userData.department,
     };
+
+    // Track new user registration for admin dashboard
+    if (isUsingDemoCredentials) {
+      const demoUsers = JSON.parse(localStorage.getItem('demoUsers') || '[]');
+      demoUsers.push({
+        ...newStudent,
+        loginTime: new Date().toISOString()
+      });
+      localStorage.setItem('demoUsers', JSON.stringify(demoUsers));
+    }
 
     return newStudent;
   } catch (error) {

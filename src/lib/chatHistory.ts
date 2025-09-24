@@ -60,7 +60,6 @@ export async function getChatSessions(studentId: string): Promise<ChatSession[]>
 
 export async function saveChatMessage(sessionId: string, message: ChatMessage): Promise<void> {
   try {
-    // Skip Supabase if using demo credentials
     if (!isUsingDemoCredentials) {
       const { error } = await supabase
         .from('chat_messages')
@@ -75,9 +74,25 @@ export async function saveChatMessage(sessionId: string, message: ChatMessage): 
       if (!error) {
         return;
       }
+    } else {
+      // Save to localStorage for demo mode
+      const demoChats = JSON.parse(localStorage.getItem('demoChats') || '[]');
+      const chatData = {
+        id: Date.now(),
+        content: message.content,
+        is_user: message.isUser,
+        created_at: message.timestamp.toISOString(),
+        intent: message.intent || '',
+        confidence: message.confidence || 0,
+        student_id: sessionId.split('_')[1] || 'demo_user',
+        chat_sessions: {
+          title: 'Demo Chat',
+          students: { student_id: 'DEMO/24U/0001', first_name: 'Demo', last_name: 'User' }
+        }
+      };
+      demoChats.push(chatData);
+      localStorage.setItem('demoChats', JSON.stringify(demoChats.slice(-100))); // Keep last 100 messages
     }
-
-    // Fallback - do nothing (message not saved in development)
   } catch (error) {
     console.error('Error saving chat message:', error);
   }
