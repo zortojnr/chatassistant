@@ -63,7 +63,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const fetchDashboardStats = async () => {
     try {
       // If using demo credentials, return mock data
-      if (isUsingDemoCredentials()) {
+      if (isUsingDemoCredentials) {
         setStats({
           totalStudents: 1247,
           totalChats: 3892,
@@ -116,7 +116,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const fetchRealtimeChats = async () => {
     try {
       // If using demo credentials, return mock data
-      if (isUsingDemoCredentials()) {
+      if (isUsingDemoCredentials) {
         const mockChats = [
           {
             id: 1,
