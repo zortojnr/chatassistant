@@ -120,7 +120,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userData, onLogout }) => 
     try {
       // Try AI response first, fallback to rule-based
       let responseContent: string;
-      const response = await processMessage(inputMessage, userData);
+      const response = await processMessage(inputMessage, userData, `${userData.firstName} ${userData.lastName}`);
       responseContent = response.content;
       
       setTimeout(() => {

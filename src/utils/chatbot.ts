@@ -1,5 +1,6 @@
 import { UserData } from '../types/user';
 import { searchMauKnowledgeBase } from '../data/mauKnowledgeBase';
+import { storeUnansweredQuestion, getCustomKnowledgeBase, searchCustomKnowledgeBase } from '../lib/knowledgeBaseManager';
 
 interface ChatResponse {
   content: string;
@@ -70,15 +71,34 @@ What would you like to know about MAU?`;
   return kbResponse;
 }
 
-export async function processMessage(message: string, userData: UserData): Promise<ChatResponse> {
+export async function processMessage(message: string, userData: UserData, studentName?: string): Promise<ChatResponse> {
   // Simulate processing delay
   await new Promise(resolve => setTimeout(resolve, 500));
+  
+  // First check custom knowledge base
+  const customKB = await getCustomKnowledgeBase();
+  const customResponse = searchCustomKnowledgeBase(message, customKB);
+  
+  if (customResponse) {
+    return {
+      content: customResponse,
+      intent: 'custom_knowledge',
+      confidence: 0.95
+    };
+  }
   
   const { intent, confidence } = classifyIntent(message);
   const content = generateResponse(intent, message, userData);
   
   // If no specific response found, provide a helpful fallback
   if (!content || content.includes('What specific information would you like to know about MAU?')) {
+    // Store as unanswered question for admin review
+    await storeUnansweredQuestion(
+      message, 
+      userData.studentId, 
+      studentName || `${userData.studentId} User`
+    );
+    
     return {
       content: `I can help you with information about Modibbo Adama University (MAU) including:
 
@@ -98,6 +118,11 @@ What specific information would you like to know about MAU?`,
       intent: 'general_help',
       confidence: 0.8
     };
+  }
+  
+  // If we found a response but confidence is low, still store for potential improvement
+  if (confidence < 0.8) {
+    await storeUnansweredQuestion(message, userData.studentId, studentName || `${userData.studentId} User`);
   }
   
   return {
