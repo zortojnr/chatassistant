@@ -46,7 +46,7 @@ function classifyIntent(message: string): { intent: string; confidence: number }
 
 async function generateResponse(intent: string, message: string, userData: UserData): Promise<string> {
   // Always try the knowledge base first
-  const kbResponse = searchMauKnowledgeBase(message);
+  const kbResponse = await searchMauKnowledgeBase(message);
   
   // If knowledge base has a specific answer, use it
   if (kbResponse && !kbResponse.includes('What specific information would you like to know about MAU?')) {
