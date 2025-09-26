@@ -11,7 +11,7 @@ export const mauKnowledgeBase = {
     vision: "To be a world-class university that provides excellent education, research and community service for sustainable development.",
     mission: "To provide quality higher education, conduct cutting-edge research, and render community service that will contribute to national and global development.",
     website: "https://mau.edu.ng",
-    viceChancellor: "Prof. Abdullahi Liman Tukur",
+    viceChancellor: "Prof. Ibrahim Umar",
     deputyVCs: [
       "Deputy VC (Academic)",
       "Deputy VC (Administration)"
@@ -35,7 +35,7 @@ export const qnaDatabase = [
     keywords: ["admission status", "jamb", "caps", "check"]
   },
   {
-    question: "How do I generate my admission letter?",
+    question: "How do I generate my JAMB admission letter?",
     answer: "Log in to the JAMB portal https://efacility.jamb.gov.ng/ to accept admission, then download your JAMB admission letter. The school's Exams & Records will issue the MAU admission letter after clearance.",
     category: "admissions",
     keywords: ["admission letter", "jamb", "acceptance"]
@@ -118,7 +118,7 @@ export const qnaDatabase = [
   },
   {
     question: "How much is hostel fee and how do I pay?",
-    answer: "Average ₦15,000–₦25,000 per session. Pay through Remita and confirm at the Student Affairs Division.",
+    answer: "Average ₦30,000–₦90,000 per session, Depending on the hostel. Pay through Remita and confirm at the Student Affairs Division.",
     category: "hostel",
     keywords: ["hostel fees", "payment", "accommodation"]
   },
@@ -148,7 +148,7 @@ export const qnaDatabase = [
   },
   {
     question: "Who do I report hostel issues to?",
-    answer: "Report to the Hall Supervisor or Student Affairs Division.",
+    answer: "Report to the Hall Supervisor(Potter) or Student Affairs Division.",
     category: "hostel",
     keywords: ["complaint", "hostel", "issues", "maintenance"]
   },
@@ -168,13 +168,13 @@ export const qnaDatabase = [
   },
   {
     question: "How do I check my results?",
-    answer: "Results are available through the Student Portal. Log in with your student ID and password to view your academic records.",
+    answer: "Results are available through the Student Portal[https://mautech.safsrms.com/]. Log in with your student ID and password to view your academic records.",
     category: "academic",
     keywords: ["results", "check results", "portal", "grades"]
   },
   {
     question: "How do I get my transcript?",
-    answer: "Apply for transcripts at the Academic Office. Submit the required form with payment receipt and valid ID.",
+    answer: "Apply for transcripts at the Academic Office or respective departmental exam officer. Submit the required form with payment receipt and a valid ID.",
     category: "academic",
     keywords: ["transcript", "academic records", "certificate"]
   },
@@ -232,13 +232,13 @@ export const qnaDatabase = [
   },
   {
     question: "ICT support contact?",
-    answer: "ICT Help Desk is available Monday-Friday 8:00 AM - 5:00 PM for technical support and Student Portal issues.",
+    answer: "ICT Help Desk is available Monday-Friday 8:00 AM - 4:00 PM for technical support and Student Portal issues.",
     category: "contacts",
     keywords: ["ict", "technical support", "portal issues", "help desk"]
   },
   {
     question: "Who is the Vice-Chancellor?",
-    answer: "The current Vice-Chancellor of MAU is Prof. Abdullahi Liman Tukur.",
+    answer: "The current Vice-Chancellor of MAU is Prof. Ibrahim Umar.",
     category: "contacts",
     keywords: ["vice chancellor", "vc", "leadership"]
   },
@@ -281,9 +281,9 @@ MAU is a Federal University established in 1988, located in Yola, Adamawa State,
 
 Key Information:
 • Location: PMB 2076, Yola, Adamawa State
-• Vice-Chancellor: Prof. Abdullahi Liman Tukur
+• Vice-Chancellor: Prof. Ibrahim Umar
 • Website: https://mau.edu.ng
-• Contact: +234-75-627-094, info@mau.edu.ng
+• Contact: +234-70-627-0943, info@mau.edu.ng
 
 Faculties: Agriculture, Computing, Education, Engineering, Life Sciences, Physical Sciences
 
