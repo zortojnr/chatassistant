@@ -24,133 +24,133 @@ export const qnaDatabase = [
   // Admissions
   {
     question: "What are the requirements for undergraduate admission?",
-    answer: "At MAU, you need at least 5 credits in WAEC/NECO/NABTEB including English and Mathematics, plus JAMB UTME with the required cutoff. Check faculty requirements at [MAU Admissions](https://mau.edu.ng/admissions).",
+    answer: "At MAU, you need at least 5 credits in WAEC/NECO/NABTEB including English and Mathematics, plus JAMB UTME with the required cutoff. Check faculty requirements at https://mau.edu.ng/admissions",
     category: "admissions",
-    keywords: ["requirements", "undergraduate", "jamb", "waec", "neco", "nabteb", "admission"]
+    keywords: ["requirements", "undergraduate", "jamb", "waec", "neco", "nabteb"]
   },
   {
     question: "How do I check my admission status?",
-    answer: "Go to the [MAU Undergraduate Admission Portal](https://mautech.safapply.com/) or log into [JAMB CAPS](https://efacility.jamb.gov.ng/).",
+    answer: "Go to the MAU Undergraduate Admission Portal https://mautech.safapply.com/ or log into JAMB CAPS https://efacility.jamb.gov.ng/.",
     category: "admissions",
-    keywords: ["admission status", "jamb", "caps", "check", "portal"]
+    keywords: ["admission status", "jamb", "caps", "check"]
   },
   {
     question: "How do I generate my admission letter?",
-    answer: "Log in to the [JAMB portal](https://efacility.jamb.gov.ng/) to accept admission, then download your JAMB admission letter. The Exams & Records Unit will issue the MAU admission letter after clearance.",
+    answer: "Log in to the JAMB portal https://efacility.jamb.gov.ng/ to accept admission, then download your JAMB admission letter. The school's Exams & Records will issue the MAU admission letter after clearance.",
     category: "admissions",
-    keywords: ["admission letter", "jamb", "acceptance", "download", "generate"]
+    keywords: ["admission letter", "jamb", "acceptance"]
   },
   {
     question: "What documents do I need for clearance?",
     answer: "JAMB admission letter, WAEC/NECO/NABTEB results, birth certificate, local government ID, 8 passport photographs, and evidence of school fees payment.",
     category: "admissions",
-    keywords: ["clearance", "documents", "admission", "registration", "requirements"]
+    keywords: ["clearance", "documents", "admission", "registration"]
   },
   {
     question: "How do I defer my admission?",
     answer: "Write a formal letter to the Registrar through your Head of Department. Pay the deferment fee (if applicable) at the bursary and process it at Exams & Records.",
     category: "admissions",
-    keywords: ["deferment", "defer", "admission", "postpone"]
+    keywords: ["deferment", "defer", "admission"]
   },
 
   // Fees
   {
     question: "How much is the school fees?",
-    answer: "Fees vary by faculty and level. Check the latest breakdown at MAU Portals (https://mau.edu.ng/portals). On average: ₦40,000 – ₦70,000 per session (excluding hostel).",
+    answer: "Fees vary by faculty and level. Check the latest breakdown at https://mau.edu.ng/portals. On average: ₦40,000–₦70,000 per session (excluding hostel).",
     category: "fees",
-    keywords: ["school fees", "cost", "tuition", "amount", "price"]
+    keywords: ["school fees", "cost", "tuition", "amount"]
   },
   {
     question: "How do I pay my school fees online?",
-    answer: "Log into the MAU Student Portal (https://mau.edu.ng/portals), generate your RRR (Remita), pay online or at the bank, then return to the portal to confirm payment.",
+    answer: "Log into the MAU Student Portal https://mau.edu.ng/portals, generate your RRR (Remita), pay online or at the bank, then return to the portal to confirm payment.",
     category: "fees",
-    keywords: ["school fees", "payment", "online", "remita", "portal"]
+    keywords: ["school fees", "payment", "online", "remita"]
   },
   {
     question: "Can I pay in installments?",
     answer: "No. MAU requires full payment before course registration.",
     category: "fees",
-    keywords: ["installment", "partial payment", "split payment"]
+    keywords: ["installment", "partial payment"]
   },
   {
     question: "How do I generate my RRR (Remita)?",
     answer: "Log in to the student portal → Fees → Generate Invoice → Copy the RRR. You can pay online or at any commercial bank.",
     category: "fees",
-    keywords: ["remita", "rrr", "generate invoice", "payment code"]
+    keywords: ["remita", "rrr", "generate invoice"]
   },
   {
     question: "Where can I collect my payment receipt?",
     answer: "After successful payment, print your e-receipt from the portal. For stamped receipts, visit the Bursary with your evidence of payment.",
     category: "fees",
-    keywords: ["receipt", "bursary", "payment evidence", "proof"]
+    keywords: ["receipt", "bursary", "payment evidence"]
   },
   {
     question: "Can I pay school fees after the deadline?",
     answer: "Yes, but you must pay a late registration penalty fee as approved by Senate.",
     category: "fees",
-    keywords: ["late payment", "deadline", "penalty", "after deadline"]
+    keywords: ["late payment", "deadline", "penalty"]
   },
   {
     question: "What happens if I don't pay school fees?",
     answer: "You will not be able to register courses or sit for exams.",
     category: "fees",
-    keywords: ["school fees", "not paid", "restriction", "consequences"]
+    keywords: ["school fees", "not paid", "restriction"]
   },
   {
     question: "Can someone else pay school fees for me?",
     answer: "Yes. Anyone can pay using your generated RRR, but ensure the payment is confirmed on your student portal.",
     category: "fees",
-    keywords: ["third party", "payment", "sponsor", "someone else"]
+    keywords: ["third party", "payment", "sponsor"]
   },
   {
     question: "Is there a separate fee for acceptance?",
     answer: "Yes. Newly admitted students must pay an acceptance fee before clearance.",
     category: "fees",
-    keywords: ["acceptance fee", "fresh students", "new students"]
+    keywords: ["acceptance fee", "fresh students"]
   },
 
   // Hostel
   {
     question: "How do I get hostel accommodation?",
-    answer: "Apply on the portal (Hostel Allocation) immediately after paying school fees. Spaces are limited and allocated on a first-come, first-served basis.",
+    answer: "Apply on the portal (Hostel Allocation) immediately after paying school fees. Limited spaces, first come, first served.",
     category: "hostel",
     keywords: ["accommodation", "hostel", "apply", "allocation"]
   },
   {
     question: "How much is hostel fee and how do I pay?",
-    answer: "On average: ₦15,000 – ₦25,000 per session. Pay through Remita and confirm at the Student Affairs Division.",
+    answer: "Average ₦15,000–₦25,000 per session. Pay through Remita and confirm at the Student Affairs Division.",
     category: "hostel",
-    keywords: ["hostel fees", "payment", "accommodation", "cost"]
+    keywords: ["hostel fees", "payment", "accommodation"]
   },
   {
     question: "When does hostel application open?",
-    answer: "Immediately after resumption and payment of school fees. Spaces are limited.",
+    answer: "Immediately after resumption and school fees payment. Spaces are limited.",
     category: "hostel",
-    keywords: ["application", "hostel", "allocation", "when", "timing"]
+    keywords: ["application", "hostel", "allocation"]
   },
   {
     question: "Can I choose the hostel I want?",
-    answer: "Allocation is usually based on availability. Preferences may be considered but are not guaranteed.",
+    answer: "Allocation is usually by availability. Preferences may be considered but not guaranteed.",
     category: "hostel",
-    keywords: ["hostel choice", "preference", "selection"]
+    keywords: ["hostel choice", "preference"]
   },
   {
     question: "Can I change my hostel after allocation?",
     answer: "Only if you apply at Student Affairs and pay the change-of-allocation fee (if allowed).",
     category: "hostel",
-    keywords: ["change hostel", "reallocation", "transfer"]
+    keywords: ["change hostel", "reallocation"]
   },
   {
     question: "Is hostel fee refundable if I don't stay?",
     answer: "No. Once paid and allocated, hostel fees are not refundable.",
     category: "hostel",
-    keywords: ["refund", "hostel fees", "withdrawal", "refundable"]
+    keywords: ["refund", "hostel fees", "withdrawal"]
   },
   {
     question: "Who do I report hostel issues to?",
     answer: "Report to the Hall Supervisor or Student Affairs Division.",
     category: "hostel",
-    keywords: ["complaint", "hostel", "issues", "management", "problems"]
+    keywords: ["complaint", "hostel", "issues", "maintenance"]
   },
 
   // Academic
