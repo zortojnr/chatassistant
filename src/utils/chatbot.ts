@@ -44,7 +44,7 @@ function classifyIntent(message: string): { intent: string; confidence: number }
   return { intent: 'general', confidence: 0.7 };
 }
 
-function generateResponse(intent: string, message: string, userData: UserData): string {
+async function generateResponse(intent: string, message: string, userData: UserData): Promise<string> {
   // Always try the knowledge base first
   const kbResponse = searchMauKnowledgeBase(message);
   
@@ -88,7 +88,7 @@ export async function processMessage(message: string, userData: UserData, studen
   }
   
   const { intent, confidence } = classifyIntent(message);
-  const content = generateResponse(intent, message, userData);
+  const content = await generateResponse(intent, message, userData);
   
   // If no specific response found, provide a helpful fallback
   if (!content || content.includes('What specific information would you like to know about MAU?')) {

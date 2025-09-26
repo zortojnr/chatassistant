@@ -1,4 +1,6 @@
 // MAU Student Knowledge Base - Comprehensive Academic Information
+import { getCustomKnowledgeBase, searchCustomKnowledgeBase } from '../lib/knowledgeBaseManager';
+
 export const mauKnowledgeBase = {
   university: {
     name: "Modibbo Adama University",
@@ -248,7 +250,16 @@ export const qnaDatabase = [
   }
 ];
 
-export function searchMauKnowledgeBase(query: string): string {
+export async function searchMauKnowledgeBase(query: string): Promise<string> {
+  // First check custom knowledge base
+  const customKB = await getCustomKnowledgeBase();
+  const customResponse = searchCustomKnowledgeBase(query, customKB);
+  
+  if (customResponse) {
+    return customResponse;
+  }
+  
+  // Then check built-in Q&A database
   const lowerQuery = query.toLowerCase();
   
   // First search the Q&A database for keyword matches

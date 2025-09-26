@@ -16,6 +16,14 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { supabase, isUsingDemoCredentials } from '../lib/supabase';
+import { 
+  getUnansweredQuestions, 
+  addToKnowledgeBase, 
+  updateQuestionStatus, 
+  getCustomKnowledgeBase,
+  UnansweredQuestion,
+  KnowledgeBaseEntry 
+} from '../lib/knowledgeBaseManager';
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -42,11 +50,21 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [unansweredQuestions, setUnansweredQuestions] = useState<UnansweredQuestion[]>([]);
+  const [customKnowledgeBase, setCustomKnowledgeBase] = useState<KnowledgeBaseEntry[]>([]);
+  const [selectedQuestion, setSelectedQuestion] = useState<UnansweredQuestion | null>(null);
+  const [answerForm, setAnswerForm] = useState({
+    answer: '',
+    category: '',
+    keywords: ''
+  });
 
   useEffect(() => {
     setIsLoading(true);
     fetchDashboardStats();
     fetchRealtimeChats();
+    fetchUnansweredQuestions();
+    fetchCustomKnowledgeBase();
     
     // Set up real-time subscription for new messages
     let subscription;
@@ -234,11 +252,31 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     }
   };
 
+  const fetchUnansweredQuestions = async () => {
+    try {
+      const questions = await getUnansweredQuestions();
+      setUnansweredQuestions(questions);
+    } catch (error) {
+      console.error('Error fetching unanswered questions:', error);
+    }
+  };
+
+  const fetchCustomKnowledgeBase = async () => {
+    try {
+      const kb = await getCustomKnowledgeBase();
+      setCustomKnowledgeBase(kb);
+    } catch (error) {
+      console.error('Error fetching custom knowledge base:', error);
+    }
+  };
+
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await Promise.all([
       fetchDashboardStats(),
-      fetchRealtimeChats()
+      fetchRealtimeChats(),
+      fetchUnansweredQuestions(),
+      fetchCustomKnowledgeBase()
     ]);
     setIsRefreshing(false);
   };
@@ -247,7 +285,37 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     setActiveTab(tabId);
     if (tabId === 'chats') {
       fetchRealtimeChats();
+    } else if (tabId === 'knowledge') {
+      fetchUnansweredQuestions();
+      fetchCustomKnowledgeBase();
     }
+  };
+
+  const handleAddAnswer = async () => {
+    if (!selectedQuestion || !answerForm.answer.trim()) return;
+
+    const keywords = answerForm.keywords.split(',').map(k => k.trim()).filter(k => k);
+    
+    const success = await addToKnowledgeBase(
+      selectedQuestion.question,
+      answerForm.answer,
+      answerForm.category || 'general',
+      keywords,
+      'admin' // In real app, use actual admin ID
+    );
+
+    if (success) {
+      await updateQuestionStatus(selectedQuestion.id, 'answered');
+      setSelectedQuestion(null);
+      setAnswerForm({ answer: '', category: '', keywords: '' });
+      await fetchUnansweredQuestions();
+      await fetchCustomKnowledgeBase();
+    }
+  };
+
+  const handleIgnoreQuestion = async (questionId: string) => {
+    await updateQuestionStatus(questionId, 'ignored');
+    await fetchUnansweredQuestions();
   };
 
   const filteredChats = realtimeChats.filter(chat =>
@@ -424,6 +492,206 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     </div>
   );
 
+  const renderKnowledgeBase = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Unanswered Questions */}
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <CardTitle className="text-mau-primary flex items-center gap-2">
+              <MessageSquare className="h-5 w-5" />
+              Unanswered Questions ({unansweredQuestions.filter(q => q.status === 'pending').length})
+            </CardTitle>
+            <CardDescription>Questions that need admin attention</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {unansweredQuestions.filter(q => q.status === 'pending').map((question) => (
+                <motion.div 
+                  key={question.id}
+                  className="border rounded-lg p-3 hover:bg-gray-50 transition-colors"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-800 mb-1">
+                        {question.question}
+                      </p>
+                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <span>Asked by: {question.student_name}</span>
+                        <span>•</span>
+                        <span>Frequency: {question.frequency}</span>
+                        <span>•</span>
+                        <span>{new Date(question.asked_at).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      onClick={() => setSelectedQuestion(question)}
+                      className="bg-mau-primary hover:bg-mau-secondary text-white"
+                    >
+                      Add Answer
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleIgnoreQuestion(question.id)}
+                      className="text-gray-600 hover:text-gray-800"
+                    >
+                      Ignore
+                    </Button>
+                  </div>
+                </motion.div>
+              ))}
+              {unansweredQuestions.filter(q => q.status === 'pending').length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>No pending questions</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Custom Knowledge Base */}
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <CardTitle className="text-mau-primary flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Custom Knowledge Base ({customKnowledgeBase.length})
+            </CardTitle>
+            <CardDescription>Admin-added Q&A entries</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {customKnowledgeBase.map((entry) => (
+                <motion.div 
+                  key={entry.id}
+                  className="border rounded-lg p-3 hover:bg-gray-50 transition-colors"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <p className="text-sm font-medium text-gray-800 mb-1">
+                    Q: {entry.question}
+                  </p>
+                  <p className="text-sm text-gray-600 mb-2">
+                    A: {entry.answer.substring(0, 100)}...
+                  </p>
+                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <span className="px-2 py-1 bg-mau-light rounded">
+                      {entry.category}
+                    </span>
+                    <span>•</span>
+                    <span>{new Date(entry.created_at).toLocaleDateString()}</span>
+                  </div>
+                </motion.div>
+              ))}
+              {customKnowledgeBase.length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>No custom entries yet</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Answer Form Modal */}
+      {selectedQuestion && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto"
+          >
+            <h3 className="text-lg font-semibold text-mau-primary mb-4">
+              Add Answer to Knowledge Base
+            </h3>
+            
+            <div className="mb-4 p-3 bg-gray-50 rounded">
+              <p className="text-sm font-medium text-gray-800">Question:</p>
+              <p className="text-sm text-gray-600">{selectedQuestion.question}</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Asked by: {selectedQuestion.student_name} • Frequency: {selectedQuestion.frequency}
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Answer *
+                </label>
+                <textarea
+                  value={answerForm.answer}
+                  onChange={(e) => setAnswerForm(prev => ({ ...prev, answer: e.target.value }))}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-mau-primary focus:border-mau-primary"
+                  rows={4}
+                  placeholder="Provide a comprehensive answer..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Category
+                </label>
+                <select
+                  value={answerForm.category}
+                  onChange={(e) => setAnswerForm(prev => ({ ...prev, category: e.target.value }))}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-mau-primary focus:border-mau-primary"
+                >
+                  <option value="">Select category</option>
+                  <option value="admissions">Admissions</option>
+                  <option value="fees">Fees & Payment</option>
+                  <option value="academic">Academic</option>
+                  <option value="hostel">Accommodation</option>
+                  <option value="campus">Campus Life</option>
+                  <option value="contacts">Contacts & Support</option>
+                  <option value="general">General</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Keywords (comma-separated)
+                </label>
+                <Input
+                  value={answerForm.keywords}
+                  onChange={(e) => setAnswerForm(prev => ({ ...prev, keywords: e.target.value }))}
+                  placeholder="e.g., registration, course, fees, payment"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <Button
+                onClick={handleAddAnswer}
+                className="bg-mau-primary hover:bg-mau-secondary text-white"
+                disabled={!answerForm.answer.trim()}
+              >
+                Add to Knowledge Base
+              </Button>
+              <Button
+                onClick={() => setSelectedQuestion(null)}
+                variant="outline"
+                className="border-gray-300 text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </Button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </div>
+  );
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-mau-primary via-mau-secondary to-mau-primary flex items-center justify-center">
@@ -510,6 +778,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           {[
             { id: 'overview', label: 'Overview', icon: BarChart3 },
             { id: 'chats', label: 'Real-time Chats', icon: MessageSquare },
+            { id: 'knowledge', label: 'Knowledge Base', icon: Users },
             { id: 'settings', label: 'Settings', icon: Settings },
           ].map((tab) => {
             const Icon = tab.icon;
@@ -541,6 +810,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           >
             {activeTab === 'overview' && renderOverview()}
             {activeTab === 'chats' && renderRealtimeChats()}
+            {activeTab === 'knowledge' && renderKnowledgeBase()}
             {activeTab === 'settings' && (
               <motion.div
                 initial={{ opacity: 0 }}
