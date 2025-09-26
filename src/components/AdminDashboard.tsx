@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Users, 
   MessageSquare, 
@@ -41,8 +41,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [realtimeChats, setRealtimeChats] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setIsLoading(true);
     fetchDashboardStats();
     fetchRealtimeChats();
     
@@ -68,6 +70,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         subscription.unsubscribe();
       }
     };
+  }, []);
+
+  useEffect(() => {
+    // Simulate initial loading
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   const fetchDashboardStats = async () => {
@@ -223,67 +234,101 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     }
   };
 
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await Promise.all([
+      fetchDashboardStats(),
+      fetchRealtimeChats()
+    ]);
+    setIsRefreshing(false);
+  };
+
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    if (tabId === 'chats') {
+      fetchRealtimeChats();
+    }
+  };
+
   const filteredChats = realtimeChats.filter(chat =>
     chat.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
     chat.chat_sessions?.students?.student_id.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const renderOverview = () => (
-    <div className="space-y-6">
+    <motion.div 
+      className="space-y-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ staggerChildren: 0.1 }}
+    >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="border-mau-primary/20">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Total Students</CardTitle>
-            <Users className="h-4 w-4 text-mau-primary" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-mau-primary">{stats.totalStudents}</div>
-            <p className="text-xs text-gray-500">Registered users</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-mau-primary/20">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Total Chats</CardTitle>
-            <MessageSquare className="h-4 w-4 text-mau-primary" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-mau-primary">{stats.totalChats}</div>
-            <p className="text-xs text-gray-500">Chat sessions</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-mau-primary/20">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Active Today</CardTitle>
-            <TrendingUp className="h-4 w-4 text-mau-primary" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-mau-primary">{stats.activeToday}</div>
-            <p className="text-xs text-gray-500">Users today</p>
-          </CardContent>
-        </Card>
+        {[
+          { title: 'Total Students', value: stats.totalStudents, icon: Users, desc: 'Registered users' },
+          { title: 'Total Chats', value: stats.totalChats, icon: MessageSquare, desc: 'Chat sessions' },
+          { title: 'Active Today', value: stats.activeToday, icon: TrendingUp, desc: 'Users today' }
+        ].map((stat, index) => {
+          const Icon = stat.icon;
+          return (
+            <motion.div
+              key={stat.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <Card className="border-mau-primary/20 hover:shadow-lg transition-shadow cursor-pointer">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-gray-600">{stat.title}</CardTitle>
+                  <Icon className="h-4 w-4 text-mau-primary" />
+                </CardHeader>
+                <CardContent>
+                  <motion.div 
+                    className="text-2xl font-bold text-mau-primary"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: index * 0.1 + 0.2, type: "spring" }}
+                  >
+                    {stat.value}
+                  </motion.div>
+                  <p className="text-xs text-gray-500">{stat.desc}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          );
+        })}
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-mau-primary">Frequently Asked Questions</CardTitle>
-          <CardDescription>Most common student queries</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {stats.topQuestions.map((item, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-mau-light rounded-lg">
-                <span className="text-sm text-gray-700">{item.question}</span>
-                {item.count && (
-                  <span className="text-sm font-medium text-mau-primary">{item.count}</span>
-                )}
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+      >
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <CardTitle className="text-mau-primary">Frequently Asked Questions</CardTitle>
+            <CardDescription>Most common student queries</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {stats.topQuestions.map((item, index) => (
+                <motion.div 
+                  key={index} 
+                  className="flex items-center justify-between p-3 bg-mau-light rounded-lg hover:bg-mau-light/80 transition-colors"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5 + index * 0.1 }}
+                >
+                  <span className="text-sm text-gray-700">{item.question}</span>
+                  {item.count && (
+                    <span className="text-sm font-medium text-mau-primary">{item.count}</span>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </motion.div>
   );
 
   const renderRealtimeChats = () => (
@@ -299,7 +344,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           />
         </div>
         <Button 
-          onClick={fetchRealtimeChats}
+          onClick={handleRefresh}
           className="bg-mau-primary hover:bg-mau-secondary"
           disabled={isRefreshing}
         >
@@ -308,59 +353,120 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-mau-primary flex items-center gap-2">
-            <Eye className="h-5 w-5" />
-            Real-time Chat Monitor
-          </CardTitle>
-          <CardDescription>Live view of student conversations</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4 max-h-96 overflow-y-auto">
-            {filteredChats.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>No chat messages found</p>
-                <p className="text-sm">Messages will appear here as students interact with the assistant</p>
-              </div>
-            ) : (
-            filteredChats.map((chat, index) => (
-              <div key={index} className="border-l-4 border-mau-primary pl-4 py-2">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium text-mau-primary">
-                    {chat.chat_sessions?.students?.student_id || chat.student_id || 'Unknown Student'}
-                  </span>
-                  <span className="text-xs text-gray-500 flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    {new Date(chat.created_at).toLocaleTimeString()}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-700 bg-gray-50 p-2 rounded">
-                  {chat.content}
-                </p>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className={`text-xs px-2 py-1 rounded ${
-                    chat.is_user 
-                      ? 'bg-blue-100 text-blue-800' 
-                      : 'bg-green-100 text-green-800'
-                  }`}>
-                    {chat.is_user ? 'Student' : 'Assistant'}
-                  </span>
-                  {chat.intent && (
-                    <span className="text-xs px-2 py-1 rounded bg-mau-light text-mau-primary">
-                      {chat.intent}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <CardTitle className="text-mau-primary flex items-center gap-2">
+              <Eye className="h-5 w-5" />
+              Real-time Chat Monitor
+            </CardTitle>
+            <CardDescription>Live view of student conversations</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4 max-h-96 overflow-y-auto">
+              {filteredChats.length === 0 ? (
+                <motion.div 
+                  className="text-center py-8 text-gray-500"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>No chat messages found</p>
+                  <p className="text-sm">Messages will appear here as students interact with the assistant</p>
+                </motion.div>
+              ) : (
+              filteredChats.map((chat, index) => (
+                <motion.div 
+                  key={index} 
+                  className="border-l-4 border-mau-primary pl-4 py-2 hover:bg-gray-50 rounded-r-lg transition-colors"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-medium text-mau-primary">
+                      {chat.chat_sessions?.students?.student_id || chat.student_id || 'Unknown Student'}
                     </span>
-                  )}
-                </div>
-              </div>
-            ))
-            )}
-          </div>
-        </CardContent>
-      </Card>
+                    <span className="text-xs text-gray-500 flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      {new Date(chat.created_at).toLocaleTimeString()}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-700 bg-gray-50 p-2 rounded">
+                    {chat.content}
+                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className={`text-xs px-2 py-1 rounded ${
+                      chat.is_user 
+                        ? 'bg-blue-100 text-blue-800' 
+                        : 'bg-green-100 text-green-800'
+                    }`}>
+                      {chat.is_user ? 'Student' : 'Assistant'}
+                    </span>
+                    {chat.intent && (
+                      <span className="text-xs px-2 py-1 rounded bg-mau-light text-mau-primary">
+                        {chat.intent}
+                      </span>
+                    )}
+                  </div>
+                </motion.div>
+              ))
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   );
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-mau-primary via-mau-secondary to-mau-primary flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center"
+        >
+          <div className="w-24 h-24 mx-auto mb-4 bg-white rounded-full shadow-lg flex items-center justify-center p-2">
+            <img 
+              src="/MAU.jpg" 
+              alt="MAU Logo" 
+              className="w-full h-full object-contain rounded-full"
+            />
+          </div>
+          <motion.h1 
+            className="text-white text-2xl font-bold mb-4"
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >
+            Loading Admin Dashboard...
+          </motion.h1>
+          <div className="flex justify-center space-x-2">
+            {[0, 1, 2].map((i) => (
+              <motion.div
+                key={i}
+                className="w-3 h-3 bg-white rounded-full"
+                animate={{
+                  scale: [1, 1.5, 1],
+                  opacity: [0.5, 1, 0.5]
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  delay: i * 0.2
+                }}
+              />
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -396,7 +502,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Navigation Tabs */}
-        <div className="flex space-x-1 mb-8 bg-white p-1 rounded-lg shadow-sm">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex space-x-1 mb-8 bg-white p-1 rounded-lg shadow-sm"
+        >
           {[
             { id: 'overview', label: 'Overview', icon: BarChart3 },
             { id: 'chats', label: 'Real-time Chats', icon: MessageSquare },
@@ -406,7 +516,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabChange(tab.id)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   activeTab === tab.id
                     ? 'bg-mau-primary text-white'
@@ -418,43 +528,61 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               </button>
             );
           })}
-        </div>
+        </motion.div>
 
         {/* Content */}
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          {activeTab === 'overview' && renderOverview()}
-          {activeTab === 'chats' && renderRealtimeChats()}
-          {activeTab === 'settings' && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-mau-primary">System Settings</CardTitle>
-                <CardDescription>Configure system parameters</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      OpenAI API Key
-                    </label>
-                    <Input
-                      type="password"
-                      placeholder="Enter OpenAI API key..."
-                      className="max-w-md"
-                    />
-                  </div>
-                  <Button className="bg-mau-primary hover:bg-mau-secondary">
-                    Save Settings
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </motion.div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            {activeTab === 'overview' && renderOverview()}
+            {activeTab === 'chats' && renderRealtimeChats()}
+            {activeTab === 'settings' && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-mau-primary">System Settings</CardTitle>
+                    <CardDescription>Configure system parameters</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          OpenAI API Key
+                        </label>
+                        <Input
+                          type="password"
+                          placeholder="Enter OpenAI API key..."
+                          className="max-w-md"
+                        />
+                      </div>
+                      <Button className="bg-mau-primary hover:bg-mau-secondary">
+                        Save Settings
+                      </Button>
+                      <Button 
+                        onClick={handleRefresh}
+                        variant="outline"
+                        className="border-mau-primary text-mau-primary hover:bg-mau-primary/10"
+                        disabled={isRefreshing}
+                      >
+                        <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+                        {isRefreshing ? 'Refreshing...' : 'Refresh Data'}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );

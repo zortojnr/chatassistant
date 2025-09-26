@@ -13,9 +13,10 @@ interface LoginScreenProps {
   onLogin: (userData: AuthUser) => void;
   onSignUp: () => void;
   onAdminLogin: () => void;
+  hasLoggedInBefore?: boolean;
 }
 
-const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLogin }) => {
+const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLogin, hasLoggedInBefore = false }) => {
   const [animationComplete, setAnimationComplete] = useState(false);
   const [formData, setFormData] = useState({
     studentId: '',
@@ -31,12 +32,17 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
   const universityName = "MODIBBO ADAMA UNIVERSITY";
 
   useEffect(() => {
+    if (hasLoggedInBefore) {
+      setAnimationComplete(true);
+      return;
+    }
+    
     const timer = setTimeout(() => {
       setAnimationComplete(true);
     }, universityName.length * 100 + 1000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [hasLoggedInBefore]);
 
   const validateStudentId = (id: string): boolean => {
     const pattern = /^[A-Z]{3}\/\d{2}[A-Z]\/\d{4}$/;
@@ -115,7 +121,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
         </motion.div>
 
         {/* Animated University Name */}
-        <motion.div
+        {!hasLoggedInBefore && (
+          <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
@@ -147,13 +154,29 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, onSignUp, onAdminLog
             Knowledge and Humanism
           </motion.p>
         </motion.div>
+        )}
+        
+        {hasLoggedInBefore && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center mb-8"
+          >
+            <div className="text-white text-xl md:text-2xl font-bold tracking-wider">
+              {universityName}
+            </div>
+            <p className="text-white/80 text-sm mt-2">
+              Knowledge and Humanism
+            </p>
+          </motion.div>
+        )}
 
         {/* Login Form */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ 
-            opacity: animationComplete ? 1 : 0, 
-            y: animationComplete ? 0 : 20 
+            opacity: (animationComplete || hasLoggedInBefore) ? 1 : 0, 
+            y: (animationComplete || hasLoggedInBefore) ? 0 : 20 
           }}
           transition={{ duration: 0.6 }}
         >

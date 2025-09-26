@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Eye, EyeOff } from 'lucide-react';
+import { Shield, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
@@ -19,9 +19,11 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onBack }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [loginAttempted, setLoginAttempted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoginAttempted(true);
     console.log('Admin form submit - Username:', formData.username, 'Password:', formData.password);
     
     const newErrors: Record<string, string> = {};
@@ -45,6 +47,8 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onBack }) => {
         
         if (adminData) {
           console.log('Admin login successful, calling onLogin');
+          // Add a small delay to show the loading state
+          await new Promise(resolve => setTimeout(resolve, 1000));
           onLogin(adminData);
         } else {
           console.log('Admin login failed');
@@ -165,7 +169,14 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onBack }) => {
                   className="w-full bg-mau-primary hover:bg-mau-primary/90 text-white py-2 rounded-md transition-colors"
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Signing In...' : 'Access Dashboard'}
+                  {isLoading ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Signing In...
+                    </div>
+                  ) : (
+                    'Access Dashboard'
+                  )}
                 </Button>
 
                 <Button
@@ -173,16 +184,24 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin, onBack }) => {
                   onClick={onBack}
                   variant="outline"
                   className="w-full border-mau-primary text-mau-primary hover:bg-mau-primary/10"
+                  disabled={isLoading}
                 >
                   Back to Student Login
                 </Button>
               </form>
 
-              <div className="mt-4 p-3 bg-mau-light rounded-md">
+              {!loginAttempted && (
+                <motion.div 
+                  className="mt-4 p-3 bg-mau-light rounded-md"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                >
                 <p className="text-xs text-gray-600 text-center">
                   Demo credentials: admin / admin123
                 </p>
-              </div>
+                </motion.div>
+              )}
             </CardContent>
           </Card>
         </motion.div>

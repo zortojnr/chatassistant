@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import LoginScreen from './components/LoginScreen';
 import SignUpScreen from './components/SignUpScreen';
 import AdminLogin from './components/AdminLogin';
@@ -11,8 +12,10 @@ function App() {
   const [admin, setAdmin] = useState<any>(null);
   const [showSignUp, setShowSignUp] = useState(false);
   const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [hasLoggedInBefore, setHasLoggedInBefore] = useState(false);
 
   const handleLogin = (userData: AuthUser) => {
+    setHasLoggedInBefore(true);
     setUser(userData);
   };
 
@@ -40,6 +43,7 @@ function App() {
 
   const handleAdminLogin = (adminData: any) => {
     console.log('App.tsx - handleAdminLogin called with:', adminData);
+    setHasLoggedInBefore(true);
     setAdmin(adminData);
   };
 
@@ -48,6 +52,7 @@ function App() {
     setAdmin(null);
     setShowSignUp(false);
     setShowAdminLogin(false);
+    // Keep hasLoggedInBefore as true to prevent animations on subsequent logins
   };
 
   const handleBackToLogin = () => {
@@ -56,29 +61,40 @@ function App() {
   };
 
   return (
-    <div>
-      {showAdminLogin ? (
+    <AnimatePresence mode="wait">
+      {showAdminLogin && !admin ? (
         <AdminLogin 
           onLogin={handleAdminLogin}
           onBack={handleBackToLogin}
+          key="admin-login"
         />
-      ) : showSignUp ? (
+      ) : showSignUp && !user ? (
         <SignUpScreen 
           onBack={handleBackToLogin}
           onSignUp={handleSignUp}
+          key="signup"
         />
       ) : admin ? (
-        <AdminDashboard onLogout={handleLogout} />
+        <AdminDashboard 
+          onLogout={handleLogout} 
+          key="admin-dashboard"
+        />
       ) : !user ? (
         <LoginScreen 
           onLogin={handleLogin} 
           onSignUp={() => setShowSignUp(true)}
           onAdminLogin={() => setShowAdminLogin(true)}
+          hasLoggedInBefore={hasLoggedInBefore}
+          key="login"
         />
       ) : (
-        <ChatInterface userData={user} onLogout={handleLogout} />
+        <ChatInterface 
+          userData={user} 
+          onLogout={handleLogout}
+          key="chat"
+        />
       )}
-    </div>
+    </AnimatePresence>
   );
 }
 
